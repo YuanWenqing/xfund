@@ -5,6 +5,7 @@ import logging
 import requests as requests
 
 from fundstrategy.core import dynamics
+from fundstrategy.fund_apis import models
 
 
 class ErrCode(enum.Enum):
@@ -24,3 +25,13 @@ class DoctorXiong:
     def get_fund_detail(self, code: str, start_date: str = '', end_date: str = ''):
         url = f'https://api.doctorxiong.club/v1/fund/detail?code={code}&startDate={start_date}&endDate={end_date}'
         return self.do_get(url)
+
+    def get_nav_list(self, code: str, start_date: str = '', end_date: str = '') -> models.FundNavList:
+        detail = self.get_fund_detail(code, start_date, end_date).data
+        fund_info = models.FundInfo(detail.code, detail.name)
+        nav_list = models.FundNavList(fund_info)
+        for item in detail.netWorthData:
+            nav_list.append(date=item[0],
+                            value=item[1],
+                            increase=item[2])
+        return nav_list
