@@ -3,6 +3,7 @@
 import argparse
 import logging
 
+from fundstrategy import daos
 from fundstrategy import fund_apis
 from fundstrategy import setups
 
@@ -27,11 +28,9 @@ def main():
     info = nav_list.info
 
     sql = setups.setup_sql()
+    nav_dao = daos.NavDao(sql)
     for nav in nav_list.nav_list:
-        query = 'insert ignore into fund_nav(code, name, value_date, unit_value, increase_rate)' \
-                ' values(%s,%s,%s,%s,%s)'
-        args = (info.code, info.name, nav.date, nav.value, nav.increase)
-        sql.do_insert(query, args)
+        nav_dao.insert_ignore(info, nav)
     logging.info(f'{info}: {len(nav_list)} items')
 
 
