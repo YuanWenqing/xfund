@@ -5,6 +5,7 @@ import logging
 import requests as requests
 
 from fundstrategy.core import dynamics
+from fundstrategy.fund_apis import fund_api
 from fundstrategy.fund_apis import models
 
 
@@ -12,7 +13,11 @@ class ErrCode(enum.Enum):
     OK = 200
 
 
-class DoctorXiong:
+class DoctorXiong(fund_api.FundApi):
+    """
+    https://www.doctorxiong.club/api/#api-Fund-getFundDetail
+    """
+
     def __init__(self):
         self.logger = logging.getLogger(self.__class__.__name__)
 
