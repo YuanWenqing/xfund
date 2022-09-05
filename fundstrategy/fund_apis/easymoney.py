@@ -13,7 +13,7 @@ class EastMoney(fund_api.FundApi):
     """
 
     def get_nav_list(self, code: str, start_date: str = '', end_date: str = '') -> models.FundNavList:
-        url = "http://fundgz.1234567.com.cn/js/%s.js" % code
+        url = "http://fund.eastmoney.com/pingzhongdata/%s.js" % code
         headers = {'content-type': 'application/json',
                    'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:22.0) Gecko/20100101 Firefox/22.0'}
         r = requests.get(url, headers=headers)
@@ -24,7 +24,7 @@ class EastMoney(fund_api.FundApi):
         data = re.findall(r'Data_netWorthTrend = ([^;]+);', content)[0]
         data = json.loads(data)
         for item in data:
-            nav_list.append(date=models.fund_date(item['x']),
+            nav_list.append(date=models.fund_date(item['x'] / 1000),
                             value=item['y'],
                             increase=item['equityReturn'])
-        return name
+        return nav_list
