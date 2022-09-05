@@ -1,7 +1,7 @@
 -- 基金净值
 CREATE TABLE IF NOT EXISTS `fund_nav`
 (
-    `code`          VARCHAR(100) NOT NULL COMMENT 'code',
+    `code`          VARCHAR(10) NOT NULL COMMENT 'code',
     `name`          VARCHAR(100)  DEFAULT '' COMMENT '车款：2021款 55 TFSI quattro 首发先行特别版',
     `value_date`    VARCHAR(16)  NOT NULL COMMENT '净值日期',
     `unit_value`    DOUBLE(10, 5) DEFAULT 0 COMMENT '单位净值',

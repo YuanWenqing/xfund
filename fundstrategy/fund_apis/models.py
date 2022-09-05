@@ -1,5 +1,6 @@
 # coding: utf8
 import time
+import typing
 
 
 class FundInfo:
@@ -27,11 +28,9 @@ class FundNav:
 
 
 class FundNavList:
-    def __init__(self, fund_info: FundInfo, nav_list=None):
-        if nav_list is None:
-            nav_list = []
+    def __init__(self, fund_info: FundInfo, nav_list: typing.List[FundNav] = None):
         self.info = fund_info
-        self.nav_list = nav_list
+        self.nav_list = nav_list or []
 
     def __repr__(self):
         info = self.info.__repr__()
@@ -39,6 +38,9 @@ class FundNavList:
         navs = [tformat.format(i.date, i.value, i.increase) for i in self.nav_list]
         navs = '\n'.join(navs)
         return f'{info}\nnavs:\n{navs}'
+
+    def __len__(self):
+        return len(self.nav_list)
 
     def append(self, date: str, value: float, increase: float):
         self.nav_list.append(FundNav(date, value, increase))
