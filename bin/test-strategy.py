@@ -41,6 +41,8 @@ def main():
     )
     record = strategy.backtest(navs)
     record.print_profits()
+    # record.print_buys()
+    # record.print_sells()
     record.print_final()
 
 
