@@ -13,29 +13,29 @@ def parse_args():
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument('--out', default='out/', help='outdir')
-    parser.add_argument('--code', help='fund code')
-    parser.add_argument('--start', help='start date')
-    parser.add_argument('--end', help='end date')
 
-    group = parser.add_argument_group('regular')
+    group = parser.add_argument_group('basic')
+    group.add_argument('--code', help='fund code')
+    group.add_argument('--start', help='start date')
+    group.add_argument('--end', help='end date')
     group.add_argument('--init', default=10_000, type=float, help='amount to init position')
     group.add_argument('--day', default=1, type=int, help='regular days')
     group.add_argument('--regular', default=1_000, type=float, help='regular amount')
 
     group = parser.add_argument_group('add position')
-    group.add_argument('--add_rate', default=-0.1, type=float, help='rate to add position')
+    group.add_argument('--add_rate', default=-0.02, type=float, help='rate to add position')
     group.add_argument('--add_amount', default=10_000, type=float, help='amount when adding position')
 
     subs = parser.add_subparsers(title='strategy', dest='strategy')
 
     take_profit = subs.add_parser('take_profit')
-    take_profit.add_argument('--take_rate', default=0.1, type=float, help='rate to take profit')
-    take_profit.add_argument('--take_position', default=0.5, type=float, help='position when taking profit')
+    take_profit.add_argument('--take_rate', default=0.05, type=float, help='rate to take profit')
+    take_profit.add_argument('--take_position', default=0.2, type=float, help='position when taking profit')
 
     drawback = subs.add_parser('drawback')
     drawback.add_argument('--back_day', default=5, type=int, help='rate to take profit')
-    drawback.add_argument('--back_rate', default=0.1, type=float, help='rate to take profit')
-    drawback.add_argument('--back_position', default=0.5, type=float, help='position when taking profit')
+    drawback.add_argument('--back_rate', default=0.05, type=float, help='rate to take profit')
+    drawback.add_argument('--back_position', default=0.2, type=float, help='position when taking profit')
 
     return parser.parse_args()
 

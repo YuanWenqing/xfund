@@ -43,7 +43,6 @@ class DrawbackStrategy:
 
     def backtest(self, navs: typing.List[models.FundNav]) -> profits.ProfitRecord:
         record = profits.ProfitRecord()
-        add_rate = self.add_position_rate
         for i, nav in enumerate(navs):
             if i == 0:
                 # 初始建仓
@@ -54,10 +53,9 @@ class DrawbackStrategy:
                 if profit_rate > 0 and drawback_rate > self.drawback_rate:
                     delta = record.sell(nav.date, nav.value, self.drawback_position)
                     self.logger.info(f'drawback_rate={drawback_rate:.2%} > {self.drawback_rate :.2%}: sell {delta}')
-                elif profit_rate < add_rate:
+                elif nav.increase / 100 < self.add_position_rate:
                     delta = record.buy(nav.date, nav.value, self.add_position_amount)
-                    self.logger.info(f'profit_rate={profit_rate:.2%} < {add_rate:.2%}: buy {delta}')
-                    add_rate += self.add_position_rate
+                    self.logger.info(f'nav_increase={nav.increase:.2}% < {self.add_position_rate:.2%}: buy {delta}')
                 if (i + 1) % self.regular_days == 0:
                     record.buy(nav.date, nav.value, self.regular_amount)
             record.settle(nav.date, nav.value)
