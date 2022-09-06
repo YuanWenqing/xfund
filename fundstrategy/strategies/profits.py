@@ -113,6 +113,15 @@ class ProfitRecord:
             cost = (self.acc_buy.amount - self.acc_sell.amount) / self.position_equity
         return _around(cost, VALUE_DECIMALS)
 
+    @property
+    def profit(self):
+        snap = self.position_histories[-1]
+        position = Accumulation(snap.amount, snap.equity)
+        total = self.acc_sell + position
+        profit = _around(total.amount - self.acc_buy.amount, AMOUNT_DECIMALS)
+        profit_rate = _around(profit / self.acc_buy.amount, RATE_DECIMALS)
+        return profit, profit_rate
+
     def settle(self, date, net_value):
         """当天结算收益"""
         snap = PositionSnap(date, net_value, self.position_equity, self.acc_buy.average_cost)

@@ -21,8 +21,10 @@ def parse_args():
     group.add_argument('--init', default=10_000, type=float, help='amount to init position')
     group.add_argument('--day', default=1, type=int, help='regular days')
     group.add_argument('--regular', default=1_000, type=float, help='regular amount')
-    group.add_argument('--take_rate', default=0.05, type=float, help='rate to take profit')
+    group.add_argument('--take_rate', default=0.1, type=float, help='rate to take profit')
     group.add_argument('--take_position', default=0.5, type=float, help='position when taking profit')
+    group.add_argument('--add_rate', default=-0.1, type=float, help='rate to add position')
+    group.add_argument('--add_amount', default=10_000, type=float, help='amount when adding position')
 
     return parser.parse_args()
 
@@ -45,10 +47,11 @@ def main():
         regular_amount=args.regular,
         take_profit_rate=args.take_rate,
         take_profit_position=args.take_position,
-        add_position_rate=-0.1,
-        add_position_amount=10_000,
+        add_position_rate=args.add_rate,
+        add_position_amount=args.add_amount,
     )
     record = strategy.backtest(navs)
+    print(record.profit)
 
     os.makedirs(args.out, exist_ok=True)
     outname = os.path.join(args.out, 'strategy')
