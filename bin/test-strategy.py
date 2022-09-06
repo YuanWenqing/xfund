@@ -51,7 +51,7 @@ def main():
     buy_csv = f'{outname}.buy.csv'
     record.acc_buy.write_history(buy_csv)
     sell_csv = f'{outname}.sell.csv'
-    record.acc_buy.write_history(sell_csv)
+    record.acc_sell.write_history(sell_csv)
     total_csv = f'{outname}.total.csv'
     record.write_total(total_csv)
 
