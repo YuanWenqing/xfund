@@ -136,11 +136,12 @@ class ProfitRecord:
 
     def write_positions(self, out_csv):
         with open(out_csv, 'w') as outf:
-            outf.write('date,equity,amount,profit,rate\n')
-            tformat = '{:},{:.%df},{:.%df},{:.%df},{:.%d%%}\n' % (
-                EQUITY_DECIMALS, AMOUNT_DECIMALS, AMOUNT_DECIMALS, RATE_DECIMALS - 2)
+            outf.write('date,nav,equity,amount,profit,rate\n')
+            tformat = '{:},{:.%df},{:.%df},{:.%df},{:.%df},{:.%d%%}\n' % (
+                VALUE_DECIMALS, EQUITY_DECIMALS, AMOUNT_DECIMALS, AMOUNT_DECIMALS, RATE_DECIMALS - 2)
             for snap in self.position_histories:
                 outf.write(tformat.format(snap.date,
+                                          snap.net_value,
                                           snap.equity,
                                           snap.amount,
                                           snap.profit,
@@ -167,7 +168,7 @@ class ProfitRecord:
             outf.write(f'strategy,{profit},{profit_rate:.2%}\n')
             # regular profit
             net_value = self.position_histories[-1].net_value
-            profit = _around(net_value * self.acc_buy.equity - self.acc_sell.amount, AMOUNT_DECIMALS)
+            profit = _around(net_value * self.acc_buy.equity - self.acc_buy.amount, AMOUNT_DECIMALS)
             profit_rate = _around(profit / self.acc_buy.amount, RATE_DECIMALS)
             outf.write(f'regular,{profit},{profit_rate:.2%}\n')
             # fund profit
