@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # coding: utf8
 import argparse
+import os
 
 from fundstrategy import daos
 from fundstrategy import setups
@@ -11,6 +12,7 @@ def parse_args():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
+    parser.add_argument('--out', default='out/', help='outdir')
     parser.add_argument('--code', help='fund code')
     parser.add_argument('--start', help='start date')
     parser.add_argument('--end', help='end date')
@@ -40,10 +42,27 @@ def main():
         add_position_amount=10_000,
     )
     record = strategy.backtest(navs)
-    record.print_profits()
-    # record.print_buys()
-    # record.print_sells()
-    record.print_final()
+
+    os.makedirs(args.out, exist_ok=True)
+    outname = os.path.join(args.out, 'strategy')
+
+    position_csv = f'{outname}.position.csv'
+    record.write_positions(position_csv)
+    buy_csv = f'{outname}.buy.csv'
+    record.acc_buy.write_history(buy_csv)
+    sell_csv = f'{outname}.sell.csv'
+    record.acc_buy.write_history(sell_csv)
+    total_csv = f'{outname}.total.csv'
+    record.write_total(total_csv)
+
+    tformat = '{:<10} : {:<}'
+    for name, csv_file in [
+        ('position', position_csv),
+        ('buy', buy_csv),
+        ('sell', sell_csv),
+        ('total', total_csv)
+    ]:
+        print(tformat.format(name, csv_file))
 
 
 if __name__ == '__main__':

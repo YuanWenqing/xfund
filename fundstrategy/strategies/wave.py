@@ -43,9 +43,9 @@ class WaveRegularStrategy:
                 # 初始建仓
                 record.buy(nav.date, nav.value, self.init_amount)
             else:
-                if record.profit_histories[-1][3] >= self.take_profit_rate:
+                if record.position_histories[-1].profit_rate >= self.take_profit_rate:
                     record.sell(nav.date, nav.value, self.take_profit_position)
                 if (i + 1) % self.regular_days == 0:
                     record.buy(nav.date, nav.value, self.regular_amount)
-            record.settle_profit(nav.date, nav.value)
+            record.settle(nav.date, nav.value)
         return record
