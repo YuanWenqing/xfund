@@ -1,4 +1,5 @@
 # coding: utf8
+import logging
 import typing
 
 from fundstrategy.core import models
@@ -36,6 +37,8 @@ class WaveRegularStrategy:
         self.add_position_amount = add_position_amount
         # self.stop_loss_rate = stop_loss_rate
 
+        self.logger = logging.getLogger(self.__class__.__name__)
+
     def backtest(self, navs: typing.List[models.FundNav]) -> profits.ProfitRecord:
         record = profits.ProfitRecord()
         for i, nav in enumerate(navs):
@@ -43,8 +46,11 @@ class WaveRegularStrategy:
                 # 初始建仓
                 record.buy(nav.date, nav.value, self.init_amount)
             else:
-                if record.position_histories[-1].profit_rate >= self.take_profit_rate:
-                    record.sell(nav.date, nav.value, self.take_profit_position)
+                position = record.position_histories[-1]
+                if position.profit_rate >= self.take_profit_rate:
+                    delta = record.sell(nav.date, nav.value, self.take_profit_position)
+                    self.logger.info(
+                        f'profit_rate={position.profit_rate:.2%} > {self.take_profit_rate:.2%}: sell {delta}')
                 if (i + 1) % self.regular_days == 0:
                     record.buy(nav.date, nav.value, self.regular_amount)
             record.settle(nav.date, nav.value)

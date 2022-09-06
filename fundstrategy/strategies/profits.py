@@ -9,6 +9,10 @@ AMOUNT_DECIMALS = 2  # 金额小数位
 RATE_DECIMALS = 4  # 收益率小数位
 
 
+def _around(value, decimals):
+    return float(np.around(value, decimals))
+
+
 # 持仓资产、收益及成本价说明：https://www.futuhk.com/hans/support/topic448?lang=zh-cn
 
 
@@ -18,20 +22,37 @@ class AccDelta:
         self.amount = amount
         self.equity = equity
 
+    def __repr__(self):
+        return f'<{self.__class__.__name__}: {self.date}, {self.amount:.2f}, {self.equity:.3f}>'
+
 
 class Accumulation:
-    def __init__(self):
-        self.amount = 0
-        self.equity = 0
+    def __init__(self, amount=0., equity: float = 0.):
+        self.amount = amount
+        self.equity = equity
         self.histories: typing.List[AccDelta] = []
 
+    def __add__(self, other):
+        res = Accumulation()
+        res.amount = _around(self.amount + other.amount, AMOUNT_DECIMALS)
+        res.equity = _around(self.equity + other.equity, EQUITY_DECIMALS)
+        return res
+
+    def __sub__(self, other):
+        res = Accumulation()
+        res.amount = _around(self.amount - other.amount, AMOUNT_DECIMALS)
+        res.equity = _around(self.equity - other.equity, EQUITY_DECIMALS)
+        return res
+
     def append(self, date, amount, equity):
-        self.amount = np.around(self.amount + amount, AMOUNT_DECIMALS)
-        self.equity = np.around(self.equity + equity, EQUITY_DECIMALS)
-        self.histories.append(AccDelta(date=date,
-                                       amount=amount,
-                                       equity=equity,
-                                       ))
+        self.amount = _around(self.amount + amount, AMOUNT_DECIMALS)
+        self.equity = _around(self.equity + equity, EQUITY_DECIMALS)
+        delta = AccDelta(date=date,
+                         amount=amount,
+                         equity=equity,
+                         )
+        self.histories.append(delta)
+        return delta
 
     @property
     def average_cost(self):
@@ -39,14 +60,15 @@ class Accumulation:
             cost = 0.0
         else:
             cost = self.amount / self.equity
-        return np.around(cost, VALUE_DECIMALS)
+        return _around(cost, VALUE_DECIMALS)
 
     def write_history(self, out_csv):
         with open(out_csv, 'w') as outf:
-            outf.write(','.join(['date', 'amount', 'equity']) + '\n')
+            outf.write('date,amount,equity\n')
+            tformat = '{:},{:.%df},{:.%df}\n' % (AMOUNT_DECIMALS, EQUITY_DECIMALS)
             for item in self.histories:
-                outf.write(f'{item.date},{item.amount},{item.equity}\n')
-            outf.write(f'total,{self.amount},{self.equity}\n')
+                outf.write(tformat.format(item.date, item.amount, item.equity))
+            outf.write(tformat.format('total', self.amount, self.equity))
 
 
 class PositionSnap:
@@ -55,13 +77,13 @@ class PositionSnap:
         self.net_value = net_value
         self.equity = equity
         # 持仓金额
-        self.amount = np.around(equity * net_value, AMOUNT_DECIMALS)
+        self.amount = _around(equity * net_value, AMOUNT_DECIMALS)
         if diluted_cost == 0:
             diluted_cost = net_value
         # 持仓收益
-        self.profit = np.around((net_value - diluted_cost) * equity)
+        self.profit = _around((net_value - diluted_cost) * equity, AMOUNT_DECIMALS)
         # 持仓收益率
-        self.profit_rate = np.around((net_value - diluted_cost) / diluted_cost, RATE_DECIMALS)
+        self.profit_rate = _around((net_value - diluted_cost) / diluted_cost, RATE_DECIMALS)
 
     @property
     def average_cost(self):
@@ -69,7 +91,7 @@ class PositionSnap:
             cost = 0.0
         else:
             cost = self.amount / self.equity
-        return np.around(cost, VALUE_DECIMALS)
+        return _around(cost, VALUE_DECIMALS)
 
 
 class ProfitRecord:
@@ -89,7 +111,7 @@ class ProfitRecord:
             cost = 0
         else:
             cost = (self.acc_buy.amount - self.acc_sell.amount) / self.position_equity
-        return np.around(cost, VALUE_DECIMALS)
+        return _around(cost, VALUE_DECIMALS)
 
     def settle(self, date, net_value):
         """当天结算收益"""
@@ -98,38 +120,40 @@ class ProfitRecord:
 
     def buy(self, date, net_value, amount):
         """买入"""
-        amount = np.around(amount, AMOUNT_DECIMALS)
-        equity = np.around(amount / net_value, decimals=EQUITY_DECIMALS)
-        self.acc_buy.append(date, amount, equity)
-        self.position_equity = np.around(self.position_equity + equity, EQUITY_DECIMALS)
+        amount = _around(amount, AMOUNT_DECIMALS)
+        equity = _around(amount / net_value, decimals=EQUITY_DECIMALS)
+        delta = self.acc_buy.append(date, amount, equity)
+        self.position_equity = _around(self.position_equity + equity, EQUITY_DECIMALS)
+        return delta
 
     def sell(self, date, net_value, position):
         """赎回"""
-        equity = np.around(self.position_equity * position, decimals=EQUITY_DECIMALS)
-        amount = np.around(equity * net_value, AMOUNT_DECIMALS)
-        self.acc_sell.append(date, amount, equity)
-        self.position_equity = np.around(self.position_equity - equity, EQUITY_DECIMALS)
+        equity = _around(self.position_equity * position, decimals=EQUITY_DECIMALS)
+        amount = _around(equity * net_value, AMOUNT_DECIMALS)
+        delta = self.acc_sell.append(date, amount, equity)
+        self.position_equity = _around(self.position_equity - equity, EQUITY_DECIMALS)
+        return delta
 
     def write_positions(self, out_csv):
         with open(out_csv, 'w') as outf:
-            outf.write(','.join(['date', 'equity', 'amount', 'profit', 'rate']) + '\n')
+            outf.write('date,equity,amount,profit,rate\n')
+            tformat = '{:},{:.%df},{:.%df},{:.%df},{:.%d%%}\n' % (
+                EQUITY_DECIMALS, AMOUNT_DECIMALS, AMOUNT_DECIMALS, RATE_DECIMALS - 2)
             for snap in self.position_histories:
-                outf.write(','.join([
-                    snap.date,
-                    str(snap.equity),
-                    str(snap.amount),
-                    str(snap.profit),
-                    '{:.2%}'.format(snap.profit_rate),
-                ]) + '\n')
+                outf.write(tformat.format(snap.date,
+                                          snap.equity,
+                                          snap.amount,
+                                          snap.profit,
+                                          snap.profit_rate))
 
     def write_total(self, out_csv):
+        snap = self.position_histories[-1]
+        position = Accumulation(snap.amount, snap.equity)
+        total = self.acc_buy + position - self.acc_sell
         with open(out_csv, 'w') as outf:
-            outf.write(','.join(['', 'equity', 'amount', 'avg_cost']))
-            outf.write(f'buy,{self.acc_buy.equity},{self.acc_buy.amount},{self.acc_buy.average_cost}\n')
-            outf.write(f'sell,{self.acc_sell.equity},{self.acc_sell.amount},{self.acc_sell.average_cost}\n')
-            position = self.position_histories[-1]
-            outf.write(f'position,{position.equity},{position.amount},{position.average_cost}\n')
-            total_amount = np.around(self.acc_buy.amount + position.amount - self.acc_sell.amount, AMOUNT_DECIMALS)
-            total_equity = np.around(self.acc_buy.equity + position.equity - self.acc_sell.equity, EQUITY_DECIMALS)
-            total_avg = np.around(total_amount / total_equity, VALUE_DECIMALS)
-            outf.write(f'total,{total_equity},{total_amount},{total_avg}\n')
+            outf.write('stat,equity,amount,avg_cost\n')
+            tformat = '{:},{:.%df},{:.%df},{:.%df}\n' % (EQUITY_DECIMALS, AMOUNT_DECIMALS, VALUE_DECIMALS)
+            outf.write(tformat.format('buy', self.acc_buy.equity, self.acc_buy.amount, self.acc_buy.average_cost))
+            outf.write(tformat.format('sell', self.acc_sell.equity, self.acc_sell.amount, self.acc_sell.average_cost))
+            outf.write(tformat.format('position', position.equity, position.amount, position.average_cost))
+            outf.write(tformat.format('total', total.equity, total.amount, total.average_cost))
