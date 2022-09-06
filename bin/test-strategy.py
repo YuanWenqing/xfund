@@ -17,14 +17,25 @@ def parse_args():
     parser.add_argument('--start', help='start date')
     parser.add_argument('--end', help='end date')
 
-    group = parser.add_argument_group('wave strategy')
+    group = parser.add_argument_group('regular')
     group.add_argument('--init', default=10_000, type=float, help='amount to init position')
     group.add_argument('--day', default=1, type=int, help='regular days')
     group.add_argument('--regular', default=1_000, type=float, help='regular amount')
-    group.add_argument('--take_rate', default=0.1, type=float, help='rate to take profit')
-    group.add_argument('--take_position', default=0.5, type=float, help='position when taking profit')
+
+    group = parser.add_argument_group('add position')
     group.add_argument('--add_rate', default=-0.1, type=float, help='rate to add position')
     group.add_argument('--add_amount', default=10_000, type=float, help='amount when adding position')
+
+    subs = parser.add_subparsers(title='strategy', dest='strategy')
+
+    take_profit = subs.add_parser('take_profit')
+    take_profit.add_argument('--take_rate', default=0.1, type=float, help='rate to take profit')
+    take_profit.add_argument('--take_position', default=0.5, type=float, help='position when taking profit')
+
+    drawback = subs.add_parser('drawback')
+    drawback.add_argument('--back_day', default=5, type=int, help='rate to take profit')
+    drawback.add_argument('--back_rate', default=0.1, type=float, help='rate to take profit')
+    drawback.add_argument('--back_position', default=0.5, type=float, help='position when taking profit')
 
     return parser.parse_args()
 
@@ -41,20 +52,36 @@ def main():
     if args.end:
         navs = [i for i in navs if i.date <= args.end]
 
-    strategy = strategies.WaveRegularStrategy(
-        init_amount=args.init,
-        regular_days=args.day,
-        regular_amount=args.regular,
-        take_profit_rate=args.take_rate,
-        take_profit_position=args.take_position,
-        add_position_rate=args.add_rate,
-        add_position_amount=args.add_amount,
-    )
+    if args.strategy == 'take_profit':
+        strategy = strategies.TakeProfitStrategy(
+            init_amount=args.init,
+            regular_days=args.day,
+            regular_amount=args.regular,
+            add_position_rate=args.add_rate,
+            add_position_amount=args.add_amount,
+
+            take_profit_rate=args.take_rate,
+            take_profit_position=args.take_position,
+        )
+    elif args.strategy == 'drawback':
+        strategy = strategies.DrawbackStrategy(
+            init_amount=args.init,
+            regular_days=args.day,
+            regular_amount=args.regular,
+            add_position_rate=args.add_rate,
+            add_position_amount=args.add_amount,
+
+            drawback_days=args.back_day,
+            drawback_rate=args.back_rate,
+            drawback_position=args.back_position,
+        )
+    else:
+        raise ValueError
     record = strategy.backtest(navs)
     print(record.profit)
 
     os.makedirs(args.out, exist_ok=True)
-    outname = os.path.join(args.out, 'strategy')
+    outname = os.path.join(args.out, args.strategy)
 
     position_csv = f'{outname}.position.csv'
     record.write_positions(position_csv)
