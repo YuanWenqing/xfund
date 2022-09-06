@@ -39,7 +39,7 @@ def main():
         add_position_rate=-0.1,
         add_position_amount=10_000,
     )
-    record = strategy.backtest(navs[100:110])
+    record = strategy.backtest(navs)
     record.print_profits()
     record.print_final()
 

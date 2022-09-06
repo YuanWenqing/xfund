@@ -70,18 +70,21 @@ class ProfitRecord:
         return profit_amount, profit_rate
 
     def print_profits(self):
+        print('-' * 40)
         tformat = '{:<10} | {:>10} | {:>10}'
         print(tformat.format('date', 'amount', 'profit'))
         print('-' * 40)
         for date, amount, profit in self.profit_histories:
             profit = f'{profit * 100:.2f}%'
             print(tformat.format(date, amount, profit))
+        print('-' * 40)
 
     def print_final(self):
         tformat = '{:<10} | {:>10}'
         print(tformat.format('buy', self.buy_amount))
         print(tformat.format('sell', self.sell_amount))
         print(tformat.format('position', self.position_amount))
+        print('-' * 30)
         profit_amount, profit_rate = self.final_profit
         print(tformat.format('profit', profit_amount))
         print(tformat.format('rate', f'{profit_rate * 100:.2f}%'))
