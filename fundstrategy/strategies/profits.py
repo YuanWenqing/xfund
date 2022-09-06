@@ -42,7 +42,7 @@ class ProfitRecord:
         profit_rate = np.around(profit_rate, RATE_DECIMALS)
         self.profit_histories.append((date, amount, profit_rate))
 
-    def buy(self, date, amount, net_value):
+    def buy(self, date, net_value, amount):
         """买入"""
         amount = np.around(amount, AMOUNT_DECIMALS)
         equity = np.around(amount / net_value, decimals=EQUITY_DECIMALS)
@@ -50,7 +50,7 @@ class ProfitRecord:
         self.equities += equity
         self.buys.append((date, amount, equity))
 
-    def sell(self, date, position, net_value):
+    def sell(self, date, net_value, position):
         """赎回"""
         equity = np.around(self.equities * position, decimals=EQUITY_DECIMALS)
         amount = np.around(equity * net_value, AMOUNT_DECIMALS)
