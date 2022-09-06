@@ -127,7 +127,7 @@ class ProfitRecord:
         for snap in self.position_histories[-days:-1]:
             max_value = max(max_value, snap.net_value)
         cur_value = self.position_histories[-1].net_value
-        rate = (cur_value - max_value) / max_value
+        rate = (max_value - cur_value) / max_value
         return _around(rate, RATE_DECIMALS)
 
     def settle(self, date, net_value):
