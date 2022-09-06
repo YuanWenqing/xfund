@@ -18,15 +18,20 @@ class ProfitRecord:
 
     @property
     def position_amount(self):
-        """持仓金额成本"""
+        """持仓金额"""
+        return self.profit_histories[-1][1]
+
+    @property
+    def position_cost(self):
+        """持仓成本"""
         if self.buy_amount <= self.sell_amount:
             return 0
         return self.buy_amount - self.sell_amount
 
     @property
-    def position_value(self):
-        """持仓净值成本"""
-        amount = self.position_amount
+    def equity_cost(self):
+        """份额成本"""
+        amount = self.position_cost
         if self.equities == 0 or amount == 0:
             return 0
         return np.around(amount / self.equities, decimals=VALUE_DECIMALS)
@@ -34,7 +39,7 @@ class ProfitRecord:
     def settle_profit(self, date, net_value):
         """当天结算收益"""
         amount = np.around(self.equities * net_value, decimals=AMOUNT_DECIMALS)
-        position_amount = self.position_amount
+        position_amount = self.position_cost
         if position_amount == 0:
             profit_rate = 0
         else:
@@ -57,3 +62,26 @@ class ProfitRecord:
         self.sell_amount += amount
         self.equities -= equity
         self.sells.append((date, amount, equity))
+
+    @property
+    def final_profit(self):
+        profit_amount = np.around(self.position_amount + self.sell_amount - self.buy_amount, AMOUNT_DECIMALS)
+        profit_rate = np.around(profit_amount / self.buy_amount, RATE_DECIMALS)
+        return profit_amount, profit_rate
+
+    def print_profits(self):
+        tformat = '{:<10} | {:>10} | {:>10}'
+        print(tformat.format('date', 'amount', 'profit'))
+        print('-' * 40)
+        for date, amount, profit in self.profit_histories:
+            profit = f'{profit * 100:.2f}%'
+            print(tformat.format(date, amount, profit))
+
+    def print_final(self):
+        tformat = '{:<10} | {:>10}'
+        print(tformat.format('buy', self.buy_amount))
+        print(tformat.format('sell', self.sell_amount))
+        print(tformat.format('position', self.position_amount))
+        profit_amount, profit_rate = self.final_profit
+        print(tformat.format('profit', profit_amount))
+        print(tformat.format('rate', f'{profit_rate * 100:.2f}%'))

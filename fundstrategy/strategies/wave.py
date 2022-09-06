@@ -39,7 +39,6 @@ class WaveRegularStrategy:
     def backtest(self, navs: typing.List[models.FundNav]) -> profits.ProfitRecord:
         record = profits.ProfitRecord()
         for i, nav in enumerate(navs):
-            record.settle_profit(nav.date, nav.value)
             if i == 0:
                 # 初始建仓
                 record.buy(nav.date, nav.value, self.init_amount)
@@ -48,4 +47,5 @@ class WaveRegularStrategy:
                     record.sell(nav.date, nav.value, self.take_profit_position)
                 if (i + 1) % self.regular_days == 0:
                     record.buy(nav.date, nav.value, self.regular_amount)
+            record.settle_profit(nav.date, nav.value)
         return record
