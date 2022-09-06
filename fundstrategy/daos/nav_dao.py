@@ -1,6 +1,6 @@
 # coding: utf8
 from fundstrategy.core import sql_handler
-from fundstrategy.fund_apis import models
+from fundstrategy.core import models
 
 
 class NavDao:

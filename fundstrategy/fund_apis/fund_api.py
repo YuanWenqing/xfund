@@ -1,7 +1,7 @@
 # coding: utf8
 import abc
 
-from fundstrategy.fund_apis import models
+from fundstrategy.core import models
 
 
 class FundApi(abc.ABC):

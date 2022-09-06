@@ -1,6 +1,6 @@
 # coding: utf8
 from fundstrategy.fund_apis import fund_api
-from fundstrategy.fund_apis import models
+from fundstrategy.core import models
 
 import requests
 import json

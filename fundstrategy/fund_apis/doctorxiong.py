@@ -6,7 +6,7 @@ import requests as requests
 
 from fundstrategy.core import dynamics
 from fundstrategy.fund_apis import fund_api
-from fundstrategy.fund_apis import models
+from fundstrategy.core import models
 
 
 class ErrCode(enum.Enum):
