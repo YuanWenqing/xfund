@@ -17,6 +17,13 @@ def parse_args():
     parser.add_argument('--start', help='start date')
     parser.add_argument('--end', help='end date')
 
+    group = parser.add_argument_group('wave strategy')
+    group.add_argument('--init', default=10_000, type=float, help='amount to init position')
+    group.add_argument('--day', default=1, type=int, help='regular days')
+    group.add_argument('--regular', default=1_000, type=float, help='regular amount')
+    group.add_argument('--take_rate', default=0.05, type=float, help='rate to take profit')
+    group.add_argument('--take_position', default=0.5, type=float, help='position when taking profit')
+
     return parser.parse_args()
 
 
@@ -33,11 +40,11 @@ def main():
         navs = [i for i in navs if i.date <= args.end]
 
     strategy = strategies.WaveRegularStrategy(
-        init_amount=10_000,
-        regular_days=2,
-        regular_amount=1_000,
-        take_profit_rate=0.05,
-        take_profit_position=0.5,
+        init_amount=args.init,
+        regular_days=args.day,
+        regular_amount=args.regular,
+        take_profit_rate=args.take_rate,
+        take_profit_position=args.take_position,
         add_position_rate=-0.1,
         add_position_amount=10_000,
     )
