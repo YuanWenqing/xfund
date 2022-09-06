@@ -122,6 +122,14 @@ class ProfitRecord:
         profit_rate = _around(profit / self.acc_buy.amount, RATE_DECIMALS)
         return profit, profit_rate
 
+    def drawback(self, days: int):
+        max_value = 0
+        for snap in self.position_histories[-days:-1]:
+            max_value = max(max_value, snap.net_value)
+        cur_value = self.position_histories[-1].net_value
+        rate = (cur_value - max_value) / max_value
+        return _around(rate, RATE_DECIMALS)
+
     def settle(self, date, net_value):
         """当天结算收益"""
         snap = PositionSnap(date, net_value, self.position_equity, self.acc_buy.average_cost)
