@@ -17,7 +17,7 @@ class AddByValueDrawback(ProfitStrategy):
         :param add_amount: 加仓金额
         """
         assert drawback_rate < 0
-        self.drawback_days = drawback_days
+        self.drawback_days = int(drawback_days)
         self.drawback_rate = drawback_rate
         self.add_amount = add_amount
 

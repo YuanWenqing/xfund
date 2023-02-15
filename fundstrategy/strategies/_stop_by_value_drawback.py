@@ -15,7 +15,7 @@ class StopByValueDrawback(ProfitStrategy):
         :param drawback_rate: 回撤比例阈值
         """
         assert drawback_rate < 0
-        self.drawback_days = drawback_days
+        self.drawback_days = int(drawback_days)
         self.drawback_rate = drawback_rate
 
     def do_strategy(self, record: profits.ProfitRecord, days: int, nav: models.FundNav):
