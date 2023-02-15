@@ -4,7 +4,7 @@ from fundstrategy.core import profits
 from fundstrategy.core.regular import ProfitStrategy
 
 
-class StopProfit(ProfitStrategy):
+class StopByProfitRate(ProfitStrategy):
     """根据收益率阈值止盈"""
 
     def __init__(self, profit_rate: float):
