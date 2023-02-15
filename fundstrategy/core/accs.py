@@ -10,13 +10,17 @@ from fundstrategy.core import decimals
 class Delta:
     """累加变动"""
 
-    def __init__(self, date: str, amount: Decimal, equity: Decimal):
+    def __init__(self, date: str, amount: Decimal, equity: Decimal, net_value: Decimal):
         self.date = date
         self.amount = amount
         self.equity = equity
+        self.net_value = net_value
 
     def __repr__(self):
-        return f'<{self.__class__.__name__}: {self.date}, amount={self.amount:.2f}, equity={self.equity:.3f}>'
+        return f'<{self.__class__.__name__}: {self.date},' \
+               f' amount={self.amount},' \
+               f' equity={self.equity},' \
+               f' net_value={self.net_value}>'
 
 
 class Accumulation:
@@ -27,16 +31,11 @@ class Accumulation:
         self.equity = equity
         self.histories: typing.List[Delta] = []
 
-    def acc(self, date: str, amount: Decimal, equity: Decimal) -> Delta:
+    def acc(self, delta: Delta):
         """累加"""
-        self.amount = self.amount + amount
-        self.equity = self.equity + equity
-        delta = Delta(date=date,
-                      amount=amount,
-                      equity=equity,
-                      )
+        self.amount = self.amount + delta.amount
+        self.equity = self.equity + delta.equity
         self.histories.append(delta)
-        return delta
 
     @property
     def average_value(self) -> Decimal:
