@@ -50,8 +50,10 @@ def main():
                            strategies=strategy_list,
                            )
     record = invest.backtest(navs)
-    print(f'持仓收益: {record.position_profit}, {record.position_profit_rate:.2%}')
-    print(f'历史收益: {record.total_profit}, {record.total_profit_rate:.2%}')
+    print(f'持仓收益: {record.position_amount} - {record.position_cost} = {record.position_profit}'
+          f', {record.position_profit_rate:.2%}')
+    print(f'历史收益: {record.total_amount} - {record.total_cost} = {record.total_profit}'
+          f', {record.total_profit_rate:.2%}')
 
     position_csv = f'{outname}.position.csv'
     record.write_positions(position_csv)
