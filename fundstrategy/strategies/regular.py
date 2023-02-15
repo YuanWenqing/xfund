@@ -1,9 +1,19 @@
 # coding: utf8
+import abc
 import logging
 import typing
 
 from fundstrategy.core import models
 from fundstrategy.core import profits
+
+
+class ProfitStrategy(abc.ABC):
+    """收益率策略"""
+
+    @abc.abstractmethod
+    def do_strategy(self, record: profits.ProfitRecord, days: int, nav: models.FundNav):
+        """策略操作"""
+        raise NotImplemented
 
 
 class Regular:
@@ -13,6 +23,7 @@ class Regular:
                  init_amount: float,
                  regular_days: int,
                  regular_amount: float,
+                 strategies: typing.List[ProfitStrategy] = None
                  ):
         """
         :param init_amount: 初始建仓金额
@@ -24,6 +35,7 @@ class Regular:
         self.init_amount = init_amount
         self.regular_days = regular_days
         self.regular_amount = regular_amount
+        self.strategies = strategies or []
 
     def backtest(self, navs: typing.List[models.FundNav]) -> profits.ProfitRecord:
         """历史回测"""
@@ -33,7 +45,7 @@ class Regular:
                 # 初始建仓
                 record.buy(nav.date, nav.value, self.init_amount)
             else:
-                self.do_strategy(record, i, nav)
+                self.do_strategies(record, i, nav)
                 self.do_regular(record, i, nav)
             record.settle(nav.date, nav.value)
         return record
@@ -43,6 +55,7 @@ class Regular:
         if days and days % self.regular_days == 0:
             record.buy(nav.date, nav.value, self.regular_amount)
 
-    def do_strategy(self, record: profits.ProfitRecord, days: int, nav: models.FundNav):
+    def do_strategies(self, record: profits.ProfitRecord, days: int, nav: models.FundNav):
         """策略操作"""
-        pass
+        for s in self.strategies:
+            s.do_strategy(record, days, nav)
