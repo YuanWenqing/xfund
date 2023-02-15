@@ -4,12 +4,11 @@ from fundstrategy.core import profits
 from fundstrategy.core.regular import ProfitStrategy
 
 
-class TakeDeltaProfit(ProfitStrategy):
-    """根据收益率阈值提取超额收益"""
+class StopProfit(ProfitStrategy):
+    """根据收益率阈值止盈"""
 
     def __init__(self, profit_rate: float):
         """
-
         :param profit_rate: 收益率阈值
         """
         self.profit_rate = profit_rate
@@ -18,4 +17,4 @@ class TakeDeltaProfit(ProfitStrategy):
         if record.position_profit_rate >= self.profit_rate:
             record.sell(nav.date,
                         net_value=nav.value,
-                        amount=record.position_profit)
+                        equity=record.position_equity)
