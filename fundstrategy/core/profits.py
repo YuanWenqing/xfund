@@ -145,16 +145,20 @@ class ProfitRecord:
         self.position_histories.append(position)
         return position
 
-    def drawback(self, days: int) -> Decimal:
-        """回撤比例"""
+    def max_value_in_days(self, days: int) -> Decimal:
+        """最近N天内的最大净值"""
         max_value = decimals.value(0)
-        for position in self.position_histories[-days:-1]:
+        for position in self.position_histories[-days:]:
             max_value = max(max_value, position.net_value)
-        cur_value = self.position_histories[-1].net_value
+        return max_value
+
+    def value_drawback_rate(self, curr_value: float, days: int) -> Decimal:
+        """指定净值相对于最近N天最大净值的变动比例"""
+        max_value = self.max_value_in_days(days)
         if max_value == 0:
             rate = 0
         else:
-            rate = (max_value - cur_value) / max_value
+            rate = (max_value - decimals.value(curr_value)) / max_value
         return decimals.rate(rate)
 
     def write_positions(self, out_csv):
