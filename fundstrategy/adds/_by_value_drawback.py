@@ -1,11 +1,11 @@
 # coding: utf8
 from fundstrategy.core import models
 from fundstrategy.core import profits
-from fundstrategy.strategies import ProfitStrategy
+from fundstrategy.core.regular import ProfitStrategy
 
 
-class AddPositionByDrawbackRate(ProfitStrategy):
-    """根据回撤比例加仓"""
+class AddByValueDrawback(ProfitStrategy):
+    """根据净值回撤比例加仓"""
 
     def __init__(self,
                  drawback_days: int,
