@@ -16,25 +16,25 @@ class ProfitStrategy(abc.ABC):
         raise NotImplemented
 
 
-class Regular:
+class RegularInvest:
     """定投"""
 
     def __init__(self,
                  init_amount: float,
-                 regular_days: int,
-                 regular_amount: float,
+                 interval_days: int,
+                 delta_amount: float,
                  strategies: typing.List[ProfitStrategy] = None
                  ):
         """
         :param init_amount: 初始建仓金额
-        :param regular_days: 定投间隔日期
-        :param regular_amount: 定投金额
+        :param interval_days: 定投间隔日期
+        :param delta_amount: 定投金额
         """
         self.logger = logging.getLogger(self.__class__.__name__)
 
         self.init_amount = init_amount
-        self.regular_days = regular_days
-        self.regular_amount = regular_amount
+        self.interval_days = interval_days
+        self.delta_amount = delta_amount
         self.strategies = strategies or []
 
     def backtest(self, navs: typing.List[models.FundNav]) -> profits.ProfitRecord:
@@ -52,8 +52,8 @@ class Regular:
 
     def do_regular(self, record: profits.ProfitRecord, days: int, nav: models.FundNav):
         """定投操作"""
-        if days and days % self.regular_days == 0:
-            record.buy(nav.date, nav.value, self.regular_amount)
+        if days and days % self.interval_days == 0:
+            record.buy(nav.date, nav.value, self.delta_amount)
 
     def do_strategies(self, record: profits.ProfitRecord, days: int, nav: models.FundNav):
         """策略操作"""

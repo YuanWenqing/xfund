@@ -24,12 +24,16 @@ class NavDao:
         row = self.sql.do_select(query, args, size=None)
         return self._row_to_nav(row)
 
-    def list_navs(self, code: str, cond_sql: str = None, cond_args: list = None):
+    def list_navs(self, code: str, start: str = None, end: str = None):
         query = 'select * from fund_nav where code=%s'
         args = [code]
-        if cond_sql:
-            query += f' and {cond_sql}'
-            args += cond_args or []
+        if start:
+            query += ' and value_date>=%s'
+            args.append(start)
+        if end:
+            query += ' and value_date<=%s'
+            args.append(end)
+        query += ' order by value_date asc'
         rows = self.sql.do_select(query, args, size=0)
         navs = [self._row_to_nav(r) for r in rows]
         return navs

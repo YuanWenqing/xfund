@@ -6,6 +6,7 @@ import os
 from fundstrategy import daos
 from fundstrategy import setups
 from fundstrategy import strategies
+from fundstrategy.core.regular import RegularInvest
 
 
 def parse_args():
@@ -15,73 +16,42 @@ def parse_args():
     parser.add_argument('--out', default='out/', help='outdir')
 
     group = parser.add_argument_group('basic')
-    group.add_argument('--code', help='fund code')
+    group.add_argument('--code', required=True, help='fund code')
     group.add_argument('--start', help='start date')
     group.add_argument('--end', help='end date')
     group.add_argument('--init', default=10_000, type=float, help='amount to init position')
-    group.add_argument('--day', default=1, type=int, help='regular days')
-    group.add_argument('--regular', default=1_000, type=float, help='regular amount')
+    group.add_argument('--interval', default=1, type=int, help='interval days of regular')
+    group.add_argument('--delta', default=1_000, type=float, help='delta amount of regular')
 
-    group = parser.add_argument_group('add position')
-    group.add_argument('--add_rate', default=-0.02, type=float, help='rate to add position')
-    group.add_argument('--add_amount', default=10_000, type=float, help='amount when adding position')
+    group.add_argument('--strategy', default=[], nargs='*', help='strategy conf, like `name:arg1,arg2`')
 
-    subs = parser.add_subparsers(title='strategy', dest='strategy')
-
-    take_profit = subs.add_parser('take_profit')
-    take_profit.add_argument('--take_rate', default=0.05, type=float, help='rate to take profit')
-    take_profit.add_argument('--take_position', default=0.2, type=float, help='position when taking profit')
-
-    drawback = subs.add_parser('drawback')
-    drawback.add_argument('--back_day', default=5, type=int, help='rate to take profit')
-    drawback.add_argument('--back_rate', default=0.05, type=float, help='rate to take profit')
-    drawback.add_argument('--back_position', default=0.2, type=float, help='position when taking profit')
-
-    return parser.parse_args()
+    return parser, parser.parse_args()
 
 
 def main():
-    args = parse_args()
+    parser, args = parse_args()
 
     sql = setups.setup_sql()
     nav_dao = daos.NavDao(sql)
-    navs = nav_dao.list_navs(args.code)
-    navs.sort(key=lambda i: i.date)
-    if args.start:
-        navs = [i for i in navs if i.date >= args.start]
-    if args.end:
-        navs = [i for i in navs if i.date <= args.end]
-
-    if args.strategy == 'take_profit':
-        strategy = strategies.TakeProfitStrategy(
-            init_amount=args.init,
-            regular_days=args.day,
-            regular_amount=args.regular,
-            add_position_rate=args.add_rate,
-            add_position_amount=args.add_amount,
-
-            take_profit_rate=args.take_rate,
-            take_profit_position=args.take_position,
-        )
-    elif args.strategy == 'drawback':
-        strategy = strategies.DrawbackStrategy(
-            init_amount=args.init,
-            regular_days=args.day,
-            regular_amount=args.regular,
-            add_position_rate=args.add_rate,
-            add_position_amount=args.add_amount,
-
-            drawback_days=args.back_day,
-            drawback_rate=args.back_rate,
-            drawback_position=args.back_position,
-        )
-    else:
-        raise ValueError
-    record = strategy.backtest(navs)
-    print(record.profit)
-
+    navs = nav_dao.list_navs(args.code, start=args.start, end=args.end)
+    if len(navs) == 0:
+        parser.error('no nav found, check --start/--end or list-nav first')
     os.makedirs(args.out, exist_ok=True)
-    outname = os.path.join(args.out, args.strategy)
+    outname = os.path.join(args.out, args.code)
+
+    strategy_list = []
+    for s in args.strategy:
+        s = strategies.parse_strategy(s)
+        strategy_list.append(s)
+
+    invest = RegularInvest(init_amount=args.init,
+                           interval_days=args.interval,
+                           delta_amount=args.delta,
+                           strategies=strategy_list,
+                           )
+    record = invest.backtest(navs)
+    print(f'持仓收益: {record.position_profit}, {record.position_profit_rate:.2%}')
+    print(f'历史收益: {record.total_profit}, {record.total_profit_rate:.2%}')
 
     position_csv = f'{outname}.position.csv'
     record.write_positions(position_csv)

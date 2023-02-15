@@ -169,7 +169,7 @@ class ProfitRecord:
         return decimals.rate(rate)
 
     def write_positions(self, out_csv):
-        os.makedirs(os.path.dirname(out_csv))
+        os.makedirs(os.path.dirname(out_csv), exist_ok=True)
         with open(out_csv, 'w') as outf:
             outf.write('date,nav,equity,amount,profit,rate\n')
             for snap in self.position_histories:
@@ -178,7 +178,7 @@ class ProfitRecord:
                                     snap.equity,
                                     snap.amount,
                                     snap.profit,
-                                    snap.profit_rate))
+                                    f'{snap.profit_rate:.2%}'))
 
     def write_total(self, out_csv):
         acc_position = accs.Accumulation(self.position_amount, self.position_equity)
