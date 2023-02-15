@@ -125,10 +125,17 @@ class ProfitRecord:
         self.position_equity = self.position_equity + delta.equity
         return delta
 
-    def sell(self, date: str, net_value: float, equity: float) -> accs.Delta:
+    def sell(self, date: str, net_value: float,
+             equity: typing.Union[float, Decimal] = None,
+             amount: typing.Union[float, Decimal] = None) -> accs.Delta:
         """赎回"""
+        assert not (equity is None and amount is None)
+        if equity is None:
+            equity = float(amount) / net_value
+        else:
+            amount = equity * net_value
         delta = accs.Delta(date=date,
-                           amount=decimals.amount(equity * net_value),
+                           amount=decimals.amount(amount),
                            equity=decimals.equity(equity),
                            net_value=decimals.value(net_value),
                            )
