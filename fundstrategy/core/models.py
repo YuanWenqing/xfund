@@ -16,8 +16,8 @@ class FundNav:
     def __init__(self, date: str, value: float, increase: float):
         """
         :param date: yyyy-MM-dd
-        :param value:
-        :param increase:
+        :param value: 净值
+        :param increase: 日增长率的百分点，0.1 -> 0.1%
         """
         self.date = date
         self.value = value
@@ -25,6 +25,10 @@ class FundNav:
 
     def __repr__(self):
         return f'<{self.__class__.__name__}: {self.date}, {self.value}, {self.increase}>'
+
+    @property
+    def rate(self):
+        return self.increase / 100
 
 
 class FundNavList:
