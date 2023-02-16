@@ -13,9 +13,10 @@ class NavDao:
                               increase=row['increase_rate'])
 
     def insert_ignore(self, info: models.FundInfo, nav: models.FundNav):
-        query = 'insert ignore into fund_nav(code,name,value_date,unit_value,increase_rate)' \
-                ' values(%s,%s,%s,%s,%s)'
-        args = (info.code, info.name, nav.date, nav.value, nav.increase)
+        query = 'insert ignore into fund_nav' \
+                '(code,name,value_date,unit_value,increase_rate,day_of_week,year_week)' \
+                ' values(%s,%s,%s,%s,%s,weekday(%s),yearweek(%s))'
+        args = (info.code, info.name, nav.date, nav.value, nav.increase, nav.date, nav.date)
         self.sql.do_insert(query, args)
 
     def get_nav(self, code: str, date: str) -> models.FundNav:

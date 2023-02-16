@@ -12,7 +12,7 @@ def parse_args():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
-    parser.add_argument('--code', help='fund code')
+    parser.add_argument('code', help='fund code')
     parser.add_argument('--start', help='start date')
     parser.add_argument('--end', help='end date')
 
