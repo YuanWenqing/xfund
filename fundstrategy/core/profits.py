@@ -144,7 +144,7 @@ class ProfitRecord:
         if equity is None:
             equity = float(amount) / net_value
         else:
-            amount = equity * net_value
+            amount = float(equity) * net_value
         delta = accs.Delta(date=date,
                            amount=decimals.amount(amount),
                            equity=decimals.equity(equity),
