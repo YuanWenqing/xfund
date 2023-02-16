@@ -50,14 +50,18 @@ class ProfitRecord:
         # 持仓历史
         self.position_histories: typing.List[PositionSnap] = []
         # 当前持仓份额
-        self.position_equity = decimals.equity(0)
+        self._equity = decimals.equity(0)
+        # 当前净值
+        self._value = decimals.equity(0)
 
     @property
     def position_amount(self) -> Decimal:
         """当前持仓金额"""
-        if len(self.position_histories) == 0:
-            return decimals.amount(0)
-        return self.position_histories[-1].amount
+        return decimals.amount(self._equity * self._value)
+
+    @property
+    def position_equity(self) -> Decimal:
+        return self._equity
 
     @property
     def position_cost(self) -> Decimal:
@@ -76,16 +80,14 @@ class ProfitRecord:
     @property
     def position_profit(self) -> Decimal:
         """当前持仓收益"""
-        if len(self.position_histories) == 0:
-            return decimals.equity(0)
-        return self.position_histories[-1].profit
+        return self.position_amount - self.position_cost
 
     @property
     def position_profit_rate(self) -> Decimal:
         """当前持仓收益率"""
-        if len(self.position_histories) == 0:
-            return decimals.equity(0)
-        return self.position_histories[-1].profit_rate
+        if self.position_cost == 0:
+            return decimals.rate(0)
+        return decimals.rate(self.position_profit / self.position_cost)
 
     @property
     def total_amount(self) -> Decimal:
@@ -122,7 +124,7 @@ class ProfitRecord:
                            net_value=decimals.value(net_value),
                            )
         self.acc_buy.acc(delta)
-        self.position_equity = self.position_equity + delta.equity
+        self._equity = self._equity + delta.equity
         return delta
 
     def sell(self, date: str, net_value: float,
@@ -140,7 +142,7 @@ class ProfitRecord:
                            net_value=decimals.value(net_value),
                            )
         self.acc_sell.acc(delta)
-        self.position_equity = self.position_equity - delta.equity
+        self._equity = self._equity - delta.equity
         return delta
 
     def settle(self, date: str, net_value: float) -> PositionSnap:
@@ -150,6 +152,7 @@ class ProfitRecord:
                                 equity=self.position_equity,
                                 avg_value=self.acc_buy.average_value)
         self.position_histories.append(position)
+        self._value = decimals.value(net_value)
         return position
 
     def max_value_in_days(self, days: int) -> Decimal:
