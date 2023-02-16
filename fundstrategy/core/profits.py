@@ -61,7 +61,9 @@ class ProfitRecord:
         # 当前持仓份额
         self._equity = decimals.equity(0)
         # 当前净值
-        self._value = decimals.equity(0)
+        self._value = decimals.value(0)
+        # 当前成本
+        self._cost = decimals.amount(0)
 
     @property
     def position_amount(self) -> Decimal:
@@ -75,7 +77,7 @@ class ProfitRecord:
     @property
     def position_cost(self) -> Decimal:
         """当前持仓成本"""
-        return self.acc_buy.amount - self.acc_sell.amount
+        return self._cost
 
     @property
     def position_diluted_value(self) -> Decimal:
@@ -134,6 +136,7 @@ class ProfitRecord:
                            )
         self.acc_buy.acc(delta)
         self._equity = self._equity + delta.equity
+        self._cost = self._cost + delta.amount
         return delta
 
     def sell(self, date: str, net_value: float,
@@ -152,6 +155,9 @@ class ProfitRecord:
                            )
         self.acc_sell.acc(delta)
         self._equity = self._equity - delta.equity
+        self._cost = self._cost - delta.amount
+        if self._equity <= 0:  # 清仓
+            self._cost = decimals.amount(0)
         return delta
 
     def settle(self, date: str, net_value: float) -> PositionSnap:
