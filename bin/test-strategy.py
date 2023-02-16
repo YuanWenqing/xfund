@@ -20,7 +20,8 @@ def parse_args():
     group.add_argument('--start', help='start date')
     group.add_argument('--end', help='end date')
     group.add_argument('--init', default=0, type=float, help='amount to init position')
-    group.add_argument('--interval', default=3, type=int, help='interval days of regular')
+    group.add_argument('--interval', default='w1',
+                       help='regular interval: w<weekday> for weekly or d<k> for every k days')
     group.add_argument('--delta', default=1_000, type=float, help='delta amount of regular')
 
     group.add_argument('--strategy', default=[], nargs='*', help='strategy conf, like `name:arg1,arg2`')
@@ -47,7 +48,7 @@ def main():
         strategy_list.append(s)
 
     invest = RegularInvest(init_amount=args.init,
-                           interval_days=args.interval,
+                           interval=args.interval,
                            delta_amount=args.delta,
                            strategies=strategy_list,
                            )

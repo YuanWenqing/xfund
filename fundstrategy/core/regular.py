@@ -1,6 +1,7 @@
 # coding: utf8
 import abc
 import logging
+import re
 import typing
 
 from fundstrategy.core import models
@@ -21,19 +22,19 @@ class RegularInvest:
 
     def __init__(self,
                  init_amount: float,
-                 interval_days: int,
+                 interval: str,
                  delta_amount: float,
                  strategies: typing.List[ProfitStrategy] = None
                  ):
         """
         :param init_amount: 初始建仓金额
-        :param interval_days: 定投间隔日期
+        :param interval: 定投间隔
         :param delta_amount: 定投金额
         """
         self.logger = logging.getLogger(self.__class__.__name__)
 
         self.init_amount = init_amount
-        self.interval_days = interval_days
+        self.interval = parse_interval(interval)
         self.delta_amount = delta_amount
         self.strategies = strategies or []
 
@@ -52,10 +53,22 @@ class RegularInvest:
 
     def do_regular(self, record: profits.ProfitRecord, days: int, nav: models.FundNav):
         """定投操作"""
-        if days and days % self.interval_days == 0:
+        if self.interval[0] == 'day' and days % self.interval[1] == 0:
+            record.buy(nav.date, nav.value, self.delta_amount)
+        elif self.interval[0] == 'week' and nav.weekday == self.interval[1]:
             record.buy(nav.date, nav.value, self.delta_amount)
 
     def do_strategies(self, record: profits.ProfitRecord, days: int, nav: models.FundNav):
         """策略操作"""
         for s in self.strategies:
             s.do_strategy(record, days, nav)
+
+
+def parse_interval(interval: str):
+    m = re.match('^d(\d+)$', interval)
+    if m:
+        return 'day', int(m.group(1))
+    m = re.match('^w([1-5])$', interval)
+    if m:
+        return 'week', int(m.group(1))
+    raise ValueError(interval)
