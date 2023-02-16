@@ -32,12 +32,14 @@ def main():
     parser, args = parse_args()
 
     sql = setups.setup_sql()
-    nav_dao = daos.NavDao(sql)
-    navs = nav_dao.list_navs(args.code, start=args.start, end=args.end)
+    fund = daos.FundDao(sql).get_fund(args.code)
+    if fund is None:
+        parser.error('no fund found, check --code')
+    navs = daos.NavDao(sql).list_navs(args.code, start=args.start, end=args.end)
     if len(navs) == 0:
         parser.error('no nav found, check --start/--end or list-nav first')
     os.makedirs(args.out, exist_ok=True)
-    outname = os.path.join(args.out, args.code)
+    outname = os.path.join(args.out, f'{fund.code}.{fund.name}')
 
     strategy_list = []
     for s in args.strategy:
@@ -50,9 +52,10 @@ def main():
                            strategies=strategy_list,
                            )
     record = invest.backtest(navs)
-    print(f'持仓收益: {record.position_amount} - {record.position_cost} = {record.position_profit}'
+    print(f'> {fund.name}[{fund.code}]')
+    print(f'* 持仓收益: {record.position_amount} - {record.position_cost} = {record.position_profit}'
           f', {record.position_profit_rate:.2%}')
-    print(f'历史收益: {record.total_amount} - {record.total_cost} = {record.total_profit}'
+    print(f'* 历史收益: {record.total_amount} - {record.total_cost} = {record.total_profit}'
           f', {record.total_profit_rate:.2%}')
 
     position_csv = f'{outname}.position.csv'
@@ -64,7 +67,8 @@ def main():
     total_csv = f'{outname}.total.csv'
     record.write_total(total_csv)
 
-    tformat = '{:<10} : {:<}'
+    print('* files:')
+    tformat = '. {:<10} : {:<}'
     for name, csv_file in [
         ('position', position_csv),
         ('buy', buy_csv),
