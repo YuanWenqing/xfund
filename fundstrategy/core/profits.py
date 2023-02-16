@@ -57,7 +57,7 @@ class ProfitRecord:
         # 累计卖出
         self.acc_sell = accs.Accumulation()
         # 持仓历史
-        self.position_histories: typing.List[PositionSnap] = []
+        self.histories: typing.List[PositionSnap] = []
         # 当前持仓份额
         self._equity = decimals.equity(0)
         # 当前净值
@@ -161,14 +161,14 @@ class ProfitRecord:
                                 equity=self.position_equity,
                                 cost=self.position_cost,
                                 )
-        self.position_histories.append(position)
+        self.histories.append(position)
         self._value = decimals.value(net_value)
         return position
 
     def max_value_in_days(self, days: int) -> Decimal:
         """最近N天内的最大净值"""
         max_value = decimals.value(0)
-        for position in self.position_histories[-days:]:
+        for position in self.histories[-days:]:
             max_value = max(max_value, position.net_value)
         return max_value
 
@@ -185,7 +185,7 @@ class ProfitRecord:
         os.makedirs(os.path.dirname(out_csv), exist_ok=True)
         with open(out_csv, 'w') as outf:
             outf.write('date,nav,equity,amount,cost,profit,rate\n')
-            for snap in self.position_histories:
+            for snap in self.histories:
                 outf.write(_csv_row(snap.date,
                                     snap.net_value,
                                     snap.equity,
@@ -199,6 +199,30 @@ class ProfitRecord:
         acc_total = accs.Accumulation(self.total_amount, self.total_equity)
         acc_profit = accs.Accumulation(self.total_profit, self.total_equity)
         with open(out_csv, 'w') as outf:
+            # value
+            outf.write('日期,净值,变动\n')
+            beg, end = self.histories[0], self.histories[-1]
+            outf.write(f'{beg.date},{beg.net_value},\n')
+            change_rate = decimals.rate(end.net_value / beg.net_value - 1)
+            outf.write(f'{end.date},{end.net_value},{change_rate:.2%}\n')
+            outf.write(',\n')
+
+            # outline
+            outf.write('收益对比,收益,收益率\n')
+            # 当前策略总收益
+            outf.write(f'策略收益,{self.total_profit},{self.total_profit_rate:.2%}\n')
+            # regular profit
+            net_value = self.histories[-1].net_value
+            profit = decimals.amount(net_value * self.acc_buy.equity - self.acc_buy.amount)
+            profit_rate = decimals.rate(profit / self.acc_buy.amount)
+            outf.write(f'定投收益,{profit},{profit_rate:.2%}\n')
+            # fund profit
+            equity = decimals.equity(self.acc_buy.amount / beg.net_value)
+            profit = decimals.amount((end.net_value - beg.net_value) * equity)
+            profit_rate = decimals.rate(profit / self.acc_buy.amount)
+            outf.write(f'基金变动,{profit},{profit_rate:.2%}\n')
+            outf.write(',\n')
+
             # acc
             outf.write('维度,份额,金额,平均净值\n')
             for name, acc in [
@@ -210,20 +234,6 @@ class ProfitRecord:
             ]:
                 outf.write(_csv_row(name, acc.equity, acc.amount, acc.average_value))
             outf.write('\n')
-
-            outf.write(',收益,收益率\n')
-            # 当前策略总收益
-            outf.write(f'策略收益,{self.total_profit},{self.total_profit_rate:.2%}\n')
-            # regular profit
-            net_value = self.position_histories[-1].net_value
-            profit = decimals.amount(net_value * self.acc_buy.equity - self.acc_buy.amount)
-            profit_rate = decimals.rate(profit / self.acc_buy.amount)
-            outf.write(f'定投收益,{profit},{profit_rate:.2%}\n')
-            # fund profit
-            net_value_delta = self.position_histories[-1].net_value - self.position_histories[0].net_value
-            profit = decimals.amount(net_value_delta * self.acc_buy.equity)
-            profit_rate = decimals.rate(profit / self.acc_buy.amount)
-            outf.write(f'基金变动,{profit},{profit_rate:.2%}\n')
 
 
 def _csv_row(*args):
