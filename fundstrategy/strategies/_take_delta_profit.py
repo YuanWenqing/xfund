@@ -13,8 +13,11 @@ class TakeDeltaProfit(ProfitStrategy):
         """
         self.profit_rate = profit_rate
 
+        self._prefix_rate = 0
+
     def do_strategy(self, record: profits.ProfitRecord, days: int, nav: models.FundNav):
-        if record.position_profit_rate >= self.profit_rate:
+        if record.position_profit_rate >= self._prefix_rate + self.profit_rate:
             record.sell(nav.date,
                         net_value=nav.value,
                         amount=record.position_profit)
+            self._prefix_rate += self.profit_rate
