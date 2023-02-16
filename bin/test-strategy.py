@@ -23,7 +23,7 @@ def parse_args():
     group.add_argument('--interval', default='w1',
                        help='regular interval: w<weekday> for weekly or d<k> for every k days')
     group.add_argument('--delta', default=1_000, type=float, help='delta amount of regular')
-
+    group.add_argument('--decrease', help='decrease config of regular amount: `<rate_grid>:<decrease_amount>`')
     group.add_argument('--strategy', default=[], nargs='*', help='strategy conf, like `name:arg1,arg2`')
 
     return parser, parser.parse_args()
@@ -50,6 +50,7 @@ def main():
     invest = RegularInvest(init_amount=args.init,
                            interval=args.interval,
                            delta_amount=args.delta,
+                           decrease=args.decrease,
                            strategies=strategy_list,
                            )
     record = invest.backtest(navs)

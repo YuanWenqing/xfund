@@ -4,6 +4,8 @@ import logging
 import re
 import typing
 
+import numpy as np
+
 from fundstrategy.core import models
 from fundstrategy.core import profits
 
@@ -24,18 +26,21 @@ class RegularInvest:
                  init_amount: float,
                  interval: str,
                  delta_amount: float,
+                 decrease: str = None,
                  strategies: typing.List[ProfitStrategy] = None
                  ):
         """
         :param init_amount: 初始建仓金额
         :param interval: 定投间隔
         :param delta_amount: 定投金额
+        :param decrease: 定投金额递减配置，<rate_grid>:<decrease_amount>
         """
         self.logger = logging.getLogger(self.__class__.__name__)
 
         self.init_amount = init_amount
         self.interval = parse_interval(interval)
         self.delta_amount = delta_amount
+        self.decrease = parse_decrease(decrease)
         self.strategies = strategies or []
 
     def backtest(self, navs: typing.List[models.FundNav]) -> profits.ProfitRecord:
@@ -53,10 +58,16 @@ class RegularInvest:
 
     def do_regular(self, record: profits.ProfitRecord, days: int, nav: models.FundNav):
         """定投操作"""
+        amount = self.delta_amount
+        if self.decrease and record.position_profit_rate > 0:
+            k = int(np.floor(float(record.position_profit_rate) / self.decrease[0]))
+            amount -= self.decrease[1] * k
+        if amount <= 0:
+            return
         if self.interval[0] == 'day' and days % self.interval[1] == 0:
-            record.buy(nav.date, nav.value, self.delta_amount)
+            record.buy(nav.date, nav.value, amount)
         elif self.interval[0] == 'week' and nav.weekday == self.interval[1]:
-            record.buy(nav.date, nav.value, self.delta_amount)
+            record.buy(nav.date, nav.value, amount)
 
     def do_strategies(self, record: profits.ProfitRecord, days: int, nav: models.FundNav):
         """策略操作"""
@@ -72,3 +83,11 @@ def parse_interval(interval: str):
     if m:
         return 'week', int(m.group(1))
     raise ValueError(interval)
+
+
+def parse_decrease(decrease: str):
+    if decrease:
+        rate, amount = [float(i) for i in decrease.split(':')]
+        assert rate > 0 and amount > 0
+        return rate, amount
+    return None
