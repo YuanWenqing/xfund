@@ -30,6 +30,11 @@ class FundNav:
     def rate(self):
         return self.increase / 100
 
+    @property
+    def weekday(self):
+        t = time.strptime(self.date, DATE_FORMAT)
+        return t.tm_wday + 1
+
 
 class FundNavList:
     def __init__(self, fund_info: FundInfo, nav_list: typing.List[FundNav] = None):
