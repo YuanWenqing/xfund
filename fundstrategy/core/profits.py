@@ -11,17 +11,17 @@ class PositionSnap:
     持仓快照: 持仓资产、收益及成本价说明：https://www.futuhk.com/hans/support/topic448?lang=zh-cn
     """
 
-    def __init__(self, date: str, net_value: Decimal, equity: Decimal, avg_value: Decimal):
+    def __init__(self, date: str, net_value: Decimal, equity: Decimal, cost: Decimal):
         """
         :param date: 日期
         :param net_value: 当日净值
         :param equity: 持仓份额
-        :param avg_value: 平均买入净值
+        :param cost: 买入成本
         """
         self.date = date
         self.net_value = net_value
         self.equity = equity
-        self.avg_value = avg_value or net_value
+        self.cost = cost
 
     @property
     def amount(self) -> Decimal:
@@ -29,14 +29,23 @@ class PositionSnap:
         return decimals.amount(self.equity * self.net_value)
 
     @property
+    def avg_value(self):
+        """平均买入净值"""
+        if self.equity == 0:
+            return decimals.value(0)
+        return decimals.value(self.cost / self.equity)
+
+    @property
     def profit(self) -> Decimal:
         """持仓收益"""
-        return decimals.amount((self.net_value - self.avg_value) * self.equity)
+        return self.amount - self.cost
 
     @property
     def profit_rate(self) -> Decimal:
         """持仓收益率"""
-        return decimals.rate((self.net_value - self.avg_value) / self.avg_value)
+        if self.cost == 0:
+            return decimals.rate(0)
+        return decimals.rate(self.profit / self.cost)
 
 
 class ProfitRecord:
@@ -150,7 +159,8 @@ class ProfitRecord:
         position = PositionSnap(date,
                                 net_value=decimals.value(net_value),
                                 equity=self.position_equity,
-                                avg_value=self.acc_buy.average_value)
+                                cost=self.position_cost,
+                                )
         self.position_histories.append(position)
         self._value = decimals.value(net_value)
         return position
@@ -174,12 +184,13 @@ class ProfitRecord:
     def write_positions(self, out_csv):
         os.makedirs(os.path.dirname(out_csv), exist_ok=True)
         with open(out_csv, 'w') as outf:
-            outf.write('date,nav,equity,amount,profit,rate\n')
+            outf.write('date,nav,equity,amount,cost,profit,rate\n')
             for snap in self.position_histories:
                 outf.write(_csv_row(snap.date,
                                     snap.net_value,
                                     snap.equity,
                                     snap.amount,
+                                    snap.cost,
                                     snap.profit,
                                     f'{snap.profit_rate:.2%}'))
 
