@@ -229,7 +229,7 @@ class ProfitRecord:
                 ('买入累计', self.acc_buy),
                 ('卖出累计', self.acc_sell),
                 ('当前持仓', acc_position),
-                ('历史投入', acc_total),
+                ('历史总计', acc_total),
                 ('历史收益', acc_profit),
             ]:
                 outf.write(_csv_row(name, acc.equity, acc.amount, acc.average_value))
