@@ -7,7 +7,7 @@ from fundstrategy.core.regular import ProfitStrategy
 class StopByProfitRate(ProfitStrategy):
     """根据收益率阈值止盈"""
 
-    def __init__(self, profit_rate: float):
+    def __init__(self, profit_rate: float = 20 / 100):
         """
         :param profit_rate: 收益率阈值
         """

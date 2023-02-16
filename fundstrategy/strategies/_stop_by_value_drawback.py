@@ -8,8 +8,8 @@ class StopByValueDrawback(ProfitStrategy):
     """根据净值回撤比例止盈"""
 
     def __init__(self,
-                 drawback_days: int,
-                 drawback_rate: float):
+                 drawback_days: int = 5,
+                 drawback_rate: float = -5 / 100):
         """
         :param drawback_days: 回撤计算天数
         :param drawback_rate: 回撤比例阈值

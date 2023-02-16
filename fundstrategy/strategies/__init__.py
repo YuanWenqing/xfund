@@ -7,7 +7,10 @@ from ._take_delta_profit import TakeDeltaProfit
 
 
 def parse_strategy(conf: str):
-    name, args = conf.split(':', maxsplit=1)
+    if ':' in conf:
+        name, args = conf.split(':', maxsplit=1)
+    else:
+        name, args = conf, ''
     args = [float(i) for i in args.split(',') if i]
     cls = eval(f'{name}')
     return cls(*args)

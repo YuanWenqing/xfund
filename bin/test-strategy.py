@@ -19,8 +19,8 @@ def parse_args():
     group.add_argument('--code', required=True, help='fund code')
     group.add_argument('--start', help='start date')
     group.add_argument('--end', help='end date')
-    group.add_argument('--init', default=10_000, type=float, help='amount to init position')
-    group.add_argument('--interval', default=1, type=int, help='interval days of regular')
+    group.add_argument('--init', default=0, type=float, help='amount to init position')
+    group.add_argument('--interval', default=3, type=int, help='interval days of regular')
     group.add_argument('--delta', default=1_000, type=float, help='delta amount of regular')
 
     group.add_argument('--strategy', default=[], nargs='*', help='strategy conf, like `name:arg1,arg2`')

@@ -5,12 +5,12 @@ from fundstrategy.core.regular import ProfitStrategy
 
 
 class AddByValueDrawback(ProfitStrategy):
-    """根据净值回撤比例加仓"""
+    """根据近期回撤比例加仓"""
 
     def __init__(self,
-                 drawback_days: int,
-                 drawback_rate: float,
-                 add_amount: float):
+                 drawback_days: int = 5,
+                 drawback_rate: float = -10 / 100,
+                 add_amount: float = 10_000):
         """
         :param drawback_days: 回撤计算天数
         :param drawback_rate: 回撤比例阈值

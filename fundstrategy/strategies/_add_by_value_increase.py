@@ -5,11 +5,11 @@ from fundstrategy.core.regular import ProfitStrategy
 
 
 class AddByValueIncrease(ProfitStrategy):
-    """根据净值回撤比例加仓"""
+    """根据当日净值回撤比例加仓"""
 
     def __init__(self,
-                 increase_rate: float,
-                 add_amount: float):
+                 increase_rate: float = -3 / 100,
+                 add_amount: float = 10_000):
         """
         :param increase_rate: 当日净值变动比例阈值
         :param add_amount: 加仓金额
