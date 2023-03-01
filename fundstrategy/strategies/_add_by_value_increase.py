@@ -8,7 +8,7 @@ class AddByValueIncrease(ProfitStrategy):
     """根据当日净值回撤比例加仓"""
 
     def __init__(self,
-                 increase_rate: float = -3 / 100,
+                 increase_rate: float = -2 / 100,
                  add_amount: float = 10_000):
         """
         :param increase_rate: 当日净值变动比例阈值
