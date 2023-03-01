@@ -26,12 +26,16 @@ def main():
     api = fund_apis.EastMoney()
     nav_list = api.get_nav_list(args.code, args.start, args.end)
     info = nav_list.info
+    if len(nav_list.nav_list) == 0:
+        logging.info(f'{info}: no data')
+        return
 
     sql = setups.setup_sql()
     nav_dao = daos.NavDao(sql)
     for nav in nav_list.nav_list:
         nav_dao.insert_ignore(info, nav)
-    logging.info(f'{info}: {len(nav_list)} items')
+    beg, end = nav_list.nav_list[0], nav_list.nav_list[-1]
+    logging.info(f'{info}: {beg.date} ~ {end.date}, {len(nav_list)} items')
 
 
 if __name__ == '__main__':
