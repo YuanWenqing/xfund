@@ -15,7 +15,7 @@ class NavDao:
     def insert_ignore(self, info: models.FundInfo, nav: models.FundNav):
         query = 'insert ignore into fund_nav' \
                 '(code,name,value_date,unit_value,increase_rate,day_of_week,year_week)' \
-                ' values(%s,%s,%s,%s,%s,weekday(%s),yearweek(%s))'
+                ' values(%s,%s,%s,%s,%s,weekday(%s)+1,yearweek(%s))'
         args = (info.code, info.name, nav.date, nav.value, nav.increase, nav.date, nav.date)
         self.sql.do_insert(query, args)
 
