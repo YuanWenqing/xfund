@@ -72,6 +72,8 @@ def main():
     navs = daos.NavDao(sql).list_navs(args.code, start=args.start, end=args.end)
     if len(navs) == 0:
         parser.error('no nav found, check --start/--end or list-nav first')
+    beg, end = navs[0], navs[-1]
+    logging.info(f'{fund.name}[{fund.code}]: {beg.date} ~ {end.date}, {len(navs)} items')
 
     avg_weekday_value()
     figure_increase_hist()
