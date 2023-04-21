@@ -41,7 +41,7 @@ def main():
 
         outfile = os.path.join(args.out, f'{fund.code}.{fund.name}.png')
         plt.savefig(outfile)
-        logging.info(f'image: {outfile}')
+        logging.info(f'increase histogram image: {outfile}')
 
         if args.show:
             plt.show()
