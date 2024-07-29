@@ -1,4 +1,5 @@
 # coding: utf8
+from ._message_dao import MessageDao
 from ._sql_conds import EqValueCond
 from ._sql_conds import FieldValueCmpCond
 from ._sql_conds import GteValueCond
