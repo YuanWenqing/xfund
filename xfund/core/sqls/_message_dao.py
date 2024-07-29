@@ -42,10 +42,9 @@ class MessageDao(typing.Generic[MT], abc.ABC):
         pass
 
     @property
-    @abc.abstractmethod
-    def auto_increment_field(self) -> str:
+    def auto_increment_field(self) -> typing.Optional[str]:
         """自增ID字段"""
-        pass
+        return None
 
     def parse_row(self, row: dict) -> typing.Optional[MT]:
         if row is None:
