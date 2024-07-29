@@ -2,7 +2,7 @@ import os
 import typing
 from decimal import Decimal
 
-from xfund.core import accs
+from xfund.strategies import accs
 from xfund.core import decimals
 
 

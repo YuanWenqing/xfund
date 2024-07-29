@@ -6,7 +6,7 @@ import requests as requests
 
 from xfund.core import dynamics
 from xfund.fund_apis import fund_api
-from xfund.core import models
+from xfund.daos import models
 
 
 class ErrCode(enum.Enum):

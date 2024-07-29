@@ -7,7 +7,7 @@ from xfund import daos
 from xfund import setups
 from xfund import strategies
 from xfund.core import decimals
-from xfund.core.regular import RegularInvest
+from xfund.strategies.regular import RegularInvest
 
 
 def parse_args():

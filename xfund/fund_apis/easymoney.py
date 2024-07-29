@@ -1,6 +1,6 @@
 # coding: utf8
 from xfund.fund_apis import fund_api
-from xfund.core import models
+from xfund.daos import models
 
 import requests
 import json

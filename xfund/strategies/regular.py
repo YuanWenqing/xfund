@@ -6,8 +6,8 @@ import typing
 
 import numpy as np
 
-from xfund.core import models
-from xfund.core import profits
+from xfund.daos import models
+from xfund.strategies import profits
 
 
 class ProfitStrategy(abc.ABC):

@@ -1,7 +1,7 @@
 # coding: utf8
-from xfund.core import models
-from xfund.core import profits
-from xfund.core.regular import ProfitStrategy
+from xfund.daos import models
+from xfund.strategies import profits
+from xfund.strategies.regular import ProfitStrategy
 
 
 class StopByProfitRate(ProfitStrategy):

@@ -1,7 +1,7 @@
 # coding: utf8
 import abc
 
-from xfund.core import models
+from xfund.daos import models
 
 
 class FundApi(abc.ABC):
