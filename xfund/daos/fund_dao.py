@@ -1,6 +1,6 @@
 # coding: utf8
 from xfund.core import models
-from xfund.core import sql_handler
+from xfund.core.sqls import sql_handler
 
 
 class FundDao:

@@ -14,7 +14,7 @@ class ConnectionFactory:
     def parse_url(url: str):
         m = re.match('^mysql://(.+):(.+)@(.+)/(.+)$', url)
         if m is None:
-            raise ValueError(f"illegal sql url: {url}, format: mysql://<user>:<password>@<host>/db")
+            raise ValueError(f'illegal sql url: {url}, should be like `mysql://<user>:<password>@<host>/db`')
         user, password, host, db = m.group(1), m.group(2), m.group(3), m.group(4)
         return ConnectionFactory(host=host, user=user, password=password, database=db)
 
