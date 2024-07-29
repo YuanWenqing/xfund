@@ -3,11 +3,11 @@
 import argparse
 import os
 
-from fundstrategy import daos
-from fundstrategy import setups
-from fundstrategy import strategies
-from fundstrategy.core import decimals
-from fundstrategy.core.regular import RegularInvest
+from xfund import daos
+from xfund import setups
+from xfund import strategies
+from xfund.core import decimals
+from xfund.core.regular import RegularInvest
 
 
 def parse_args():

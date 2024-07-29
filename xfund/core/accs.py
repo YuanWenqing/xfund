@@ -4,7 +4,7 @@ import os
 import typing
 from decimal import Decimal
 
-from fundstrategy.core import decimals
+from xfund.core import decimals
 
 
 class Delta:

@@ -7,9 +7,9 @@ import os.path
 import matplotlib.pyplot as plt
 import numpy as np
 
-from fundstrategy import daos
-from fundstrategy import setups
-from fundstrategy.core import decimals
+from xfund import daos
+from xfund import setups
+from xfund.core import decimals
 
 
 def parse_args():

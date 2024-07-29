@@ -2,8 +2,8 @@ import os
 import typing
 from decimal import Decimal
 
-from fundstrategy.core import accs
-from fundstrategy.core import decimals
+from xfund.core import accs
+from xfund.core import decimals
 
 
 class PositionSnap:

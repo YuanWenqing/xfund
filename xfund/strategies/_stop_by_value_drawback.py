@@ -1,7 +1,7 @@
 # coding: utf8
-from fundstrategy.core import models
-from fundstrategy.core import profits
-from fundstrategy.core.regular import ProfitStrategy
+from xfund.core import models
+from xfund.core import profits
+from xfund.core.regular import ProfitStrategy
 
 
 class StopByValueDrawback(ProfitStrategy):

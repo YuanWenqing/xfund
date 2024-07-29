@@ -3,7 +3,7 @@ import logging
 import logging.config
 import os
 
-from fundstrategy.core import sql_handler
+from xfund.core import sql_handler
 
 
 def setup_logging(conf_file='logging.ini'):

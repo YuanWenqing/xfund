@@ -1,6 +1,6 @@
 # coding: utf8
-from fundstrategy.core import models
-from fundstrategy.core import sql_handler
+from xfund.core import models
+from xfund.core import sql_handler
 
 
 class FundDao:

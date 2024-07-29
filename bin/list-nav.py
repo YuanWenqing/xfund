@@ -3,9 +3,9 @@
 import argparse
 import logging
 
-from fundstrategy import daos
-from fundstrategy import fund_apis
-from fundstrategy import setups
+from xfund import daos
+from xfund import fund_apis
+from xfund import setups
 
 
 def parse_args():

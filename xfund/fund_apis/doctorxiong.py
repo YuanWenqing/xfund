@@ -4,9 +4,9 @@ import logging
 
 import requests as requests
 
-from fundstrategy.core import dynamics
-from fundstrategy.fund_apis import fund_api
-from fundstrategy.core import models
+from xfund.core import dynamics
+from xfund.fund_apis import fund_api
+from xfund.core import models
 
 
 class ErrCode(enum.Enum):

@@ -6,8 +6,8 @@ import typing
 
 import numpy as np
 
-from fundstrategy.core import models
-from fundstrategy.core import profits
+from xfund.core import models
+from xfund.core import profits
 
 
 class ProfitStrategy(abc.ABC):

@@ -1,6 +1,6 @@
 # coding: utf8
-from fundstrategy.fund_apis import fund_api
-from fundstrategy.core import models
+from xfund.fund_apis import fund_api
+from xfund.core import models
 
 import requests
 import json
