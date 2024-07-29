@@ -1,5 +1,4 @@
 # coding: utf8
-from ._sql_conds import and_conds
 from ._sql_conds import EqValueCond
 from ._sql_conds import FieldValueCmpCond
 from ._sql_conds import GteValueCond

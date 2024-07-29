@@ -2,3 +2,5 @@ numpy
 requests
 pymysql
 matplotlib
+tqdm
+

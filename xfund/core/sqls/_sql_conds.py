@@ -137,7 +137,3 @@ class InCond(SqlCond):
 
     def args(self) -> list:
         return self.values
-
-
-def and_conds(cond_sqls: list) -> str:
-    return ' and '.join(cond_sqls)
