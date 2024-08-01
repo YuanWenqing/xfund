@@ -1,2 +1,2 @@
 # coding: utf8
-from ._easymoney import EastMoneyApi
+from ._east_money import EastMoneyApi
