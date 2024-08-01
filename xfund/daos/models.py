@@ -3,15 +3,6 @@ import time
 import typing
 
 
-class FundInfo:
-    def __init__(self, code, name):
-        self.code = code
-        self.name = name
-
-    def __repr__(self):
-        return f'<{self.__class__.__name__}: {self.code}, {self.name}>'
-
-
 class FundNav:
     def __init__(self, date: str, value: float, increase: float):
         """
