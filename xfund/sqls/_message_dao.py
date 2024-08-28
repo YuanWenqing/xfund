@@ -89,7 +89,7 @@ class MessageDao(typing.Generic[MT], abc.ABC):
             self.update_message(message)
             return 0
 
-    def insert_message(self, message: MT, insert_ignore=False):
+    def insert_message(self, message: MT, insert_ignore=False) -> int:
         columns, args = self._get_column_values(message, ignore_fields=[self.auto_increment_field])
         column_sql = ','.join(columns)
         value_sql = ('%s,' * len(args))[:-1]
@@ -98,7 +98,7 @@ class MessageDao(typing.Generic[MT], abc.ABC):
         else:
             query = 'insert'
         query = f'{query} into {self.table}({column_sql}) values({value_sql});'
-        self.sql.do_insert(query, args)
+        return self.sql.do_insert(query, args)
 
     def get_message_by_key(self, key_value) -> MT:
         """根据主键获取message"""

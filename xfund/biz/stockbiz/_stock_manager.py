@@ -4,6 +4,8 @@ import typing
 
 import tqdm
 
+from xfund import protos
+
 
 class StockManager:
     """管理股票信息和行情数据"""
@@ -16,7 +18,7 @@ class StockManager:
         self.stock_info_dao = self.ctx.stock_info_dao
         self.stock_kline_dao = self.ctx.stock_kline_dao
 
-    def import_all_stocks(self):
+    def import_all_stocks(self) -> typing.List[protos.StockInfo]:
         from xfund.biz._serving_context import ServingContext
         ctx = typing.cast(ServingContext, self.ctx.parent_ctx)
         pae_api = ctx.tpapi_context.baidu_pae_api
@@ -28,6 +30,8 @@ class StockManager:
                 break
             all_stocks.extend(stocks)
             offset += page_size
+        inserted = 0
         for stock in tqdm.tqdm(all_stocks):
-            self.stock_info_dao.insert_message(stock, insert_ignore=True)
+            inserted += self.stock_info_dao.insert_message(stock, insert_ignore=True)
+        self.logger.info(f'import stocks: {inserted}/{len(all_stocks)} new')
         return stocks
