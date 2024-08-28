@@ -4,7 +4,7 @@ import argparse
 import logging
 
 from xfund import daos
-from xfund import fund_apis
+from xfund.biz import tpapis
 from xfund import setups
 
 
@@ -23,7 +23,7 @@ def main():
     args = parse_args()
 
     # api = fund_apis.DoctorXiong()
-    api = fund_apis.EastMoneyApi()
+    api = tpapis.EastMoneyApi()
     nav_list = api.get_nav_list(args.code, args.start, args.end)
     info = nav_list.info
     if len(nav_list.nav_list) == 0:

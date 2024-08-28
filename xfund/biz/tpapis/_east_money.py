@@ -6,7 +6,7 @@ import typing
 
 import requests
 
-from xfund import daos
+from xfund import protos
 
 
 class EastMoneyApi:
@@ -17,7 +17,7 @@ class EastMoneyApi:
     https://www.cnblogs.com/insane-Mr-Li/p/15378971.html
     """
 
-    def get_nav_list(self, code: str, start_date: str = '', end_date: str = '') -> typing.List[daos.FundNav]:
+    def get_nav_list(self, code: str, start_date: str = '', end_date: str = '') -> typing.List[protos.FundNav]:
         url = "http://fund.eastmoney.com/pingzhongdata/%s.js" % code
         headers = {'content-type': 'application/json',
                    'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:22.0) Gecko/20100101 Firefox/22.0'}
@@ -28,7 +28,7 @@ class EastMoneyApi:
         data = json.loads(data)
         navs = []
         for item in data:
-            nav = daos.FundNav(code=code,
+            nav = protos.FundNav(code=code,
                                name=name,
                                date=fund_date(item['x'] / 1000),
                                net_price=item['y'],

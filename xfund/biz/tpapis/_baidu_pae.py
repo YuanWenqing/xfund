@@ -3,15 +3,15 @@ import typing
 
 import requests
 
-from xfund import daos
+from xfund import protos
 
 
-class BaiduPae:
+class BaiduPaeApi:
     """
     百度股市通接口
     """
 
-    def list_stock_infos(self, offset: int = 0, page_size: int = 100) -> typing.List[daos.StockInfo]:
+    def list_stock_infos(self, offset: int = 0, page_size: int = 100) -> typing.List[protos.StockInfo]:
         """市值排序：大部分基金持仓的股票是大公司"""
         url = f'https://finance.pae.baidu.com/selfselect/getmarketrank?sort_type=1&sort_key=24&from_mid=1&pn={offset}&rn={page_size}&group=ranklist&type=ab&finClientType=pc'
         headers = {'content-type': 'application/json',
