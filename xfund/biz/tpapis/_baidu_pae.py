@@ -22,7 +22,10 @@ class BaiduPaeApi:
                    'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:22.0) Gecko/20100101 Firefox/22.0'}
         self.logger.info(f'list_stock_infos: {url}')
         r = requests.get(url, headers=headers)
+        self.logger.info(f'response: {r.text}')
         data = r.json()
+        if data['ResultCode'] != '0':
+            raise IOError(r.text)
         data = data['Result']['Result']['DisplayData']['resultData']['tplData']['result']['rank']
         stocks = []
         for item in data:
