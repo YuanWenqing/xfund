@@ -6,10 +6,10 @@ import typing
 import tqdm
 from pymysql import cursors
 
-from xfund.core.sqls import sqlutil
-from xfund.core.sqls._sql_conds import SqlCond
-from xfund.core.sqls._sql_handler import SqlHandler
-from xfund.core.sqls._sql_message import SqlMessage
+from xfund.sqls import sqlutil
+from xfund.sqls._sql_conds import SqlCond
+from xfund.sqls._sql_handler import SqlHandler
+from xfund.sqls._sql_message import SqlMessage
 
 MT = typing.TypeVar('MT', bound=SqlMessage)
 

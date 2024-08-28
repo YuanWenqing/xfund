@@ -1,5 +1,5 @@
 # coding: utf8
-from xfund.core.sqls import sql_handler
+from xfund.sqls import sql_handler
 from xfund.daos import models
 
 

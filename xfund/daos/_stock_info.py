@@ -1,8 +1,8 @@
 # coding: utf8
 import typing
 
-from xfund.core import sqls
-from xfund.core.sqls import SqlHandler
+from xfund import sqls
+from xfund.sqls import SqlHandler
 
 
 class StockInfo(sqls.SqlMessage):

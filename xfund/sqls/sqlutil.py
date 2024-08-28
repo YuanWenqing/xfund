@@ -1,7 +1,7 @@
 # coding: utf8
 import typing
 
-from xfund.core.sqls._sql_conds import SqlCond
+from xfund.sqls._sql_conds import SqlCond
 
 
 def cond_of_dict(cond_dict: dict) -> (str, typing.List):

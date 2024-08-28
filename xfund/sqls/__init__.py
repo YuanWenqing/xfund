@@ -14,5 +14,7 @@ from ._sql_conds import NotEqValueCond
 from ._sql_conds import NotLikeCond
 from ._sql_conds import RegexpCond
 from ._sql_conds import SqlCond
+from ._sql_handler import ConnectionFactory
 from ._sql_handler import SqlHandler
+from ._sql_handler import Transaction
 from ._sql_message import SqlMessage
