@@ -42,6 +42,23 @@ class EastMoneyApi:
             navs.append(nav)
         return navs
 
+    def get_fund_stocks(self, code: str) -> typing.List[protos.FundStock]:
+        url = f'https://fundmobapi.eastmoney.com/FundMNewApi/FundMNInverstPosition?FCODE={code}&deviceid=Wap&plat=Wap&product=EFund&version=2.0.0'
+        headers = {'content-type': 'application/json',
+                   'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:22.0) Gecko/20100101 Firefox/22.0'}
+        self.logger.info(f'get_fund_stocks: {url}')
+        r = requests.get(url, headers=headers)
+        data = r.json()
+        data = data['Datas']
+        stocks = []
+        for item in data:
+            stock = protos.FundStock(code=item['GPDM'],
+                                     name=item['GPJC'],
+                                     position_percent=item['JZBL'],
+                                     )
+            stocks.append(stock)
+        return stocks
+
 
 DATE_FORMAT = '%Y-%m-%d'
 
