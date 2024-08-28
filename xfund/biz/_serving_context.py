@@ -3,10 +3,9 @@ from xfund.biz import beans
 from xfund.biz import fundbiz
 from xfund.biz import stockbiz
 from xfund.biz import tpapis
-from xfund.biz._biz_context import BizContext
 
 
-class ServingContext(BizContext):
+class ServingContext(beans.BeanContext):
 
     @property
     @beans.bean
