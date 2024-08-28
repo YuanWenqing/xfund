@@ -1,8 +1,8 @@
 # coding: utf8
 from xfund.biz import beans
 from xfund.biz._biz_context import BizContext
-from xfund.biz.fundbiz._fund_info import FundInfoDao
-from xfund.biz.fundbiz._fund_nav import FundNavDao
+from xfund.biz.fundbiz._fund_info_dao import FundInfoDao
+from xfund.biz.fundbiz._fund_nav_dao import FundNavDao
 
 
 class FundContext(BizContext):
