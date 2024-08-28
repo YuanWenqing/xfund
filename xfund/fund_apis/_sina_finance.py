@@ -4,7 +4,6 @@ import typing
 import requests
 
 from xfund import daos
-from xfund.daos import StockKline
 
 
 class SinaFinance:
@@ -20,13 +19,13 @@ class SinaFinance:
         data = r.json()
         klines = []
         for item in data:
-            kline = StockKline(code=code,
-                               date=item['day'],
-                               open_price=item['open'],
-                               close_price=item['close'],
-                               high_price=item['high'],
-                               low_price=item['low'],
-                               volume=int(item['volume']),
-                               )
+            kline = daos.StockKline(code=code,
+                                    date=item['day'],
+                                    open_price=item['open'],
+                                    close_price=item['close'],
+                                    high_price=item['high'],
+                                    low_price=item['low'],
+                                    volume=int(item['volume']),
+                                    )
             klines.append(kline)
         return klines
