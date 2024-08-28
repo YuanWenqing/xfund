@@ -3,21 +3,27 @@ from xfund.biz import beans
 from xfund.biz import fundbiz
 from xfund.biz import stockbiz
 from xfund.biz import tpapis
+from xfund.biz._core_context import CoreContext
 
 
-class ServingContext(beans.BeanContext):
+class ServingContext(CoreContext):
+
+    @property
+    @beans.bean
+    def core_context(self) -> CoreContext:
+        return self
 
     @property
     @beans.bean
     def fund_context(self) -> fundbiz.FundContext:
-        return fundbiz.FundContext(core=self.core_ctx, parent=self)
+        return fundbiz.FundContext(core=self.core_context, parent=self)
 
     @property
     @beans.bean
     def stock_context(self) -> stockbiz.StockContext:
-        return stockbiz.StockContext(core=self.core_ctx, parent=self)
+        return stockbiz.StockContext(core=self.core_context, parent=self)
 
     @property
     @beans.bean
     def tpapi_context(self) -> tpapis.TpApiContext:
-        return tpapis.TpApiContext(core=self.core_ctx, parent=self)
+        return tpapis.TpApiContext(core=self.core_context, parent=self)
