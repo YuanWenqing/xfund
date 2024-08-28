@@ -132,6 +132,89 @@
 }
 ~~~
 
+## 百度股市通
+
+股票列表（A股市值排行）：https://finance.pae.baidu.com/selfselect/getmarketrank?sort_type=1&sort_key=24&from_mid=1&pn=0&rn=20&group=ranklist&type=ab&finClientType=pc
+分页起始参数pn，每页结果数rn最多200
+~~~json
+{
+  "Result": {
+    "Result": [
+      {
+        "DisplayData": {
+          "resultData": {
+            "tplData": {
+              "result": {
+                "rank": [
+                  {
+                    "code": "601398",
+                    "name": "工商银行",
+                    "market": "ab",
+                    "financeType": "",
+                    "is_warrants": "",
+                    "expire_date": "--",
+                    "status": "-1",
+                    "list": [
+                      {
+                        "text": "最新价",
+                        "value": "6.46"
+                      },
+                      {
+                        "text": "涨跌幅",
+                        "value": "-1.07%"
+                      },
+                      {
+                        "text": "总市值",
+                        "value": "2.30万亿"
+                      }
+                    ],
+                    "exchange": "SH",
+                    "sf_url": "/sf?resource_id=5429&word=601398&ext=%7B%22sf_tab_name%22%3A%22%5Cu6982%5Cu89c8%22%7D&title=%E5%B7%A5%E5%95%86%E9%93%B6%E8%A1%8C&pd=new_stock&openapi=1&from_sf=1&dspName=iphone&name=%E5%B7%A5%E5%95%86%E9%93%B6%E8%A1%8C&code=601398&market=ab&ma_ver=4"
+                  },
+                  ...
+                  {
+                    "code": "600028",
+                    "name": "中国石化",
+                    "market": "ab",
+                    "financeType": "",
+                    "is_warrants": "",
+                    "expire_date": "--",
+                    "status": "-1",
+                    "list": [
+                      {
+                        "text": "最新价",
+                        "value": "7.08"
+                      },
+                      {
+                        "text": "涨跌幅",
+                        "value": "-1.39%"
+                      },
+                      {
+                        "text": "总市值",
+                        "value": "8616亿"
+                      }
+                    ],
+                    "exchange": "SH",
+                    "sf_url": "/sf?resource_id=5429&word=600028&ext=%7B%22sf_tab_name%22%3A%22%5Cu6982%5Cu89c8%22%7D&title=%E4%B8%AD%E5%9B%BD%E7%9F%B3%E5%8C%96&pd=new_stock&openapi=1&from_sf=1&dspName=iphone&name=%E4%B8%AD%E5%9B%BD%E7%9F%B3%E5%8C%96&code=600028&market=ab&ma_ver=4"
+                  }
+                ],
+                ...
+              },
+              ...
+            },
+            ...
+          },
+          ...
+        },
+        ...
+      }
+    ]
+    ...
+  }
+  ...
+}
+~~~
+
 ## 腾讯财经
 股票实时行情：http://qt.gtimg.cn/q=sh600519
 ~~~
