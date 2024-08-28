@@ -1,5 +1,6 @@
 # coding: utf8
 import json
+import logging
 import re
 import time
 import typing
@@ -17,10 +18,14 @@ class EastMoneyApi:
     https://www.cnblogs.com/insane-Mr-Li/p/15378971.html
     """
 
+    def __init__(self):
+        self.logger = logging.getLogger(self.__class__.__name__)
+
     def get_nav_list(self, code: str, start_date: str = '', end_date: str = '') -> typing.List[protos.FundNav]:
-        url = "http://fund.eastmoney.com/pingzhongdata/%s.js" % code
+        url = f"http://fund.eastmoney.com/pingzhongdata/{code}.js"
         headers = {'content-type': 'application/json',
                    'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:22.0) Gecko/20100101 Firefox/22.0'}
+        self.logger.info(f'get_nav_list: {url}')
         r = requests.get(url, headers=headers)
         content = r.text
         name = re.findall(r'var fS_name = "([^"]+)";', content)[0]
@@ -29,11 +34,11 @@ class EastMoneyApi:
         navs = []
         for item in data:
             nav = protos.FundNav(code=code,
-                               name=name,
-                               date=fund_date(item['x'] / 1000),
-                               net_price=item['y'],
-                               delta_percent=item['equityReturn'],
-                               )
+                                 name=name,
+                                 date=fund_date(item['x'] / 1000),
+                                 net_price=item['y'],
+                                 delta_percent=item['equityReturn'],
+                                 )
             navs.append(nav)
         return navs
 
