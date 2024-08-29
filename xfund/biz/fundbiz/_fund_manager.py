@@ -2,6 +2,10 @@
 import logging
 import typing
 
+import tqdm
+
+from xfund.utils import logutil
+
 
 class FundManager:
     """管理基金信息和行情数据"""
@@ -22,6 +26,8 @@ class FundManager:
         navs = self.east_money_api.get_nav_list(code)
         if len(navs) == 0:
             return navs
-        for nav in navs:
-            self.fund_nav_dao.insert_message(nav, insert_ignore=True)
+        with logutil.disable_console_session():
+            desc = f'update-nav-{code}.{navs[0].name}'
+            for nav in tqdm.tqdm(navs, desc=desc):
+                self.fund_nav_dao.insert_message(nav, insert_ignore=True)
         return navs

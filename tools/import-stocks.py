@@ -5,7 +5,7 @@ import logging
 import time
 
 from xfund import biz
-from xfund import inits
+from xfund.utils import logutil
 
 
 def parse_args():
@@ -30,5 +30,5 @@ def main():
 
 
 if __name__ == '__main__':
-    inits.setup_logging()
+    logutil.setup_logging()
     main()
