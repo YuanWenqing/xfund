@@ -1,5 +1,6 @@
 # coding: utf8
 import abc
+import json
 import logging
 import typing
 
@@ -17,11 +18,12 @@ MT = typing.TypeVar('MT', bound=SqlMessage)
 class MessageDao(typing.Generic[MT], abc.ABC):
     FIELD_PAYLOAD = 'json_payload'
 
-    def __init__(self, message_type: typing.Type[MT], sql: SqlHandler):
+    def __init__(self, message_type: typing.Type[MT], sql: SqlHandler, trim_column_values: bool = True):
         self.logger = logging.getLogger(self.__class__.__name__)
 
         self.message_type = message_type
         self.sql = sql
+        self.trim_column_values = trim_column_values
 
     @property
     @abc.abstractmethod
@@ -46,7 +48,7 @@ class MessageDao(typing.Generic[MT], abc.ABC):
         """自增ID字段"""
         return None
 
-    def parse_row(self, row: dict) -> typing.Optional[MT]:
+    def decode_row(self, row: dict) -> typing.Optional[MT]:
         if row is None:
             return None
         payload = row.get(self.FIELD_PAYLOAD, None)
@@ -60,8 +62,8 @@ class MessageDao(typing.Generic[MT], abc.ABC):
                 setattr(message, f, row[f])
         return message
 
-    def parse_rows(self, rows: typing.List[dict]):
-        return [self.parse_row(r) for r in rows]
+    def decode_rows(self, rows: typing.List[dict]):
+        return [self.decode_row(r) for r in rows]
 
     def cond_dict_of_message(self, message: MT) -> dict:
         return {self.key_field: getattr(message, self.key_field)}
@@ -75,7 +77,12 @@ class MessageDao(typing.Generic[MT], abc.ABC):
             columns.append(f)
             values.append(v)
         columns.append(self.FIELD_PAYLOAD)
-        values.append(message.json_dumps())
+        if self.trim_column_values:
+            d = message.as_dict()
+            d = {k: v for k, v in d.items() if k not in self.column_fields}
+            values.append(json.dumps(d))
+        else:
+            values.append(message.json_dumps())
         return columns, values
 
     def replace_message(self, message: MT):
@@ -106,7 +113,7 @@ class MessageDao(typing.Generic[MT], abc.ABC):
         cond_sql, cond_args = sqlutil.build_cond_sql(cond)
         query = f'select * from {self.table} where {cond_sql};'
         row = self.sql.do_select(query, cond_args, size=None)
-        message = self.parse_row(row)
+        message = self.decode_row(row)
         return message
 
     def list_messages(self, cond_sql: str = None, cond_args=None,
@@ -135,7 +142,7 @@ class MessageDao(typing.Generic[MT], abc.ABC):
         rows = self.sql.do_select(query, args, size=size)
         messages = []
         for row in rows:
-            messages.append(self.parse_row(row))
+            messages.append(self.decode_row(row))
         return messages
 
     def list_by_cond(self, *, cond_dict: dict = None, conds: typing.List[SqlCond] = None) -> typing.List[MT]:

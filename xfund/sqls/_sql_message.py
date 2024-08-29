@@ -10,7 +10,7 @@ class SqlMessage(abc.ABC):
         pass
 
     def as_dict(self) -> dict:
-        d = self.__dict__
+        d = dict(self.__dict__)
         return d
 
     def json_dumps(self) -> str:
