@@ -1,7 +1,7 @@
 # coding: utf8
 from xfund.biz import beans
 from xfund.biz._biz_context import BizContext
-from xfund.biz.fundbiz import FundManager
+from xfund.biz.fundbiz._fund_manager import FundManager
 from xfund.biz.fundbiz._fund_info_dao import FundInfoDao
 from xfund.biz.fundbiz._fund_nav_dao import FundNavDao
 
