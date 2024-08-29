@@ -9,7 +9,7 @@ import numpy as np
 
 from xfund import daos
 from xfund import setups
-from xfund.core import decimals
+from xfund.primary import decimals
 
 
 def parse_args():

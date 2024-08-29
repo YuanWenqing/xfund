@@ -3,7 +3,7 @@ import typing
 from decimal import Decimal
 
 from xfund.strategies import accs
-from xfund.core import decimals
+from xfund.primary import decimals
 
 
 class PositionSnap:

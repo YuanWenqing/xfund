@@ -39,6 +39,11 @@ class DynamicObject:
         return json.dumps(self._data_, indent=indent, ensure_ascii=False)
 
 
+def init_counts(*args):
+    d = {i: 0 for i in args}
+    return DynamicObject(d)
+
+
 def wrap(data, strict=False):
     if isinstance(data, dict):
         data = DynamicObject(data, strict=strict)

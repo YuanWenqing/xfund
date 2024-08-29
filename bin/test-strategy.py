@@ -6,7 +6,7 @@ import os
 from xfund import daos
 from xfund import setups
 from xfund import strategies
-from xfund.core import decimals
+from xfund.primary import decimals
 from xfund.strategies.regular import RegularInvest
 
 
