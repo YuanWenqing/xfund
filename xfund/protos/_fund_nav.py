@@ -14,7 +14,7 @@ class FundNav(sqls.SqlMessage):
                  delta_percent: float = None,
                  ):
         super().__init__()
-        self.key = f'{code}@{date}'
+        self.pk = f'{code}@{date}'
         self.code = code
         self.name = name
         self.date = date

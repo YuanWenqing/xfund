@@ -3,4 +3,4 @@ requests
 pymysql
 matplotlib
 tqdm
-
+cryptography

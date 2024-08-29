@@ -17,11 +17,11 @@ class FundNavDao(sqls.MessageDao[protos.FundNav]):
 
     @property
     def key_field(self) -> str:
-        return 'key'
+        return 'pk'
 
     @property
     def column_fields(self) -> typing.List[str]:
-        return ['key',
+        return ['pk',
                 'code',
                 'name',
                 'date',
